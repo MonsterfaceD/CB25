@@ -1,0 +1,193 @@
+% Packages
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{bold-extra}
+\usepackage{fancyhdr}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{ifthen}
+\usepackage[utf8]{inputenc}
+\usepackage{multirow}
+\usepackage{needspace}
+\usepackage{parskip}
+\usepackage{stmaryrd}
+\usepackage{listings}
+\usepackage[T1]{fontenc}
+\usepackage{longtable}
+\usepackage{comment}
+\usepackage{enumerate}
+\usepackage{xspace}
+\usepackage{textcomp}
+\usepackage{array}
+
+\usepackage{tikz}
+\usetikzlibrary{automata,positioning,shapes.geometric}
+\usepackage{tikzsymbols}
+\usepackage{todonotes}
+
+\lstset{language=Java, numbers=left, showstringspaces=false, tabsize=4}
+\geometry{a4paper, left=25mm,right=25mm, top=25mm, bottom=25mm}
+
+% check for the existence of commands
+\newcommand{\checkfor}[3]{%
+  \ifcsname#1\endcsname%
+  #2
+  \else%
+  #3
+  \fi%
+}
+
+\checkfor{exnumber}{}{\newcommand{\exnumber}{-1}}
+
+\newcommand{\exercisepagebreak}{\checkfor{isexercise}{\pagebreak}{}}
+\newcommand{\solutionpagebreak}{\checkfor{isexercise}{}{\pagebreak}}
+
+\setcounter{section}{\exnumber{}}
+
+\numberwithin{equation}{section}
+\numberwithin{figure}{section}
+\numberwithin{table}{section}
+\renewcommand{\qedsymbol}{\textsc{q.e.d.}}
+\renewenvironment{proof}[1][\proofname]{{\bfseries #1: }}{\qed}
+\newtheoremstyle{defstyle}{10pt}{5pt}{\addtolength{\leftskip}{2\leftmargini}\addtolength{\rightskip}{2\leftmargini}}{-1\leftmargini}{\scshape\bfseries}{:}{\newline}{#1 #2\ifthenelse {\equal {#3}{}} {}{ (\text{\textsc{#3}})}}{}
+\newtheoremstyle{thmstyle}{10pt}{5pt}{\addtolength{\leftskip}{2\leftmargini}\addtolength{\rightskip}{2\leftmargini} \slshape}{-1\leftmargini}{\scshape\bfseries}{:}{\newline}{#1 #2\ifthenelse {\equal {#3}{}} {}{ (\text{\textsc{#3}})}}{}
+\newtheoremstyle{exstyle}{10pt}{5pt}{\addtolength{\leftskip}{2\leftmargini}\addtolength{\rightskip}{2\leftmargini}}{-1\leftmargini}{\scshape\bfseries}{:}{\newline}{#1 #2\ifthenelse {\equal {#3}{}} {}{ (\text{\textsc{#3}})}}{}
+\newtheoremstyle{algostyle}{10pt}{5pt}{\addtolength{\leftskip}{2\leftmargini}\addtolength{\rightskip}{2\leftmargini}}{-1\leftmargini}{\scshape\bfseries}{:}{\newline}{#1\ifthenelse {\equal {#3}{}} { #2}{ \text{\textsc{#3}}}}{}
+\theoremstyle{defstyle}
+\newtheorem{mydef}{Definition}[section]
+\theoremstyle{thmstyle}
+\newtheorem{mythm}{Theorem}[section]
+\newtheorem{mylem}[mythm]{Lemma}
+\newtheorem{myprop}[mythm]{Proposition}
+\theoremstyle{exstyle}
+\newtheorem{myex}{Example}[section]
+\theoremstyle{algostyle}
+\newtheorem{myalgo}{Algorithm}
+
+% Define programming and solution environment and only use if enabled
+\checkfor{isprog}{
+  % Define exercise environment
+  \newcounter{exercise}
+  \newenvironment{exercise}[1]{\refstepcounter{exercise}\label{ex\theexercise}\section*{Programming Exercise \theexercise \hfill (#1 Points)}}{}
+  \checkfor{isexercise}{
+    % Programming exercise
+    \excludecomment{solution}
+    \excludecomment{onlysolution}
+    \newenvironment{onlyexercise}{}{}
+    \newcommand{\extitle}{Programming Exercise}
+  }{
+    % Programming solution
+    \newenvironment{solution}{\label{sol\theexercise}\subsection*{Solution: \hrulefill}}{}
+    \newenvironment{onlysolution}{}{}
+    \excludecomment{onlyexercise}
+    \newcommand{\extitle}{Programming Solution}
+    }
+}{
+  % Define exercise environment
+  \newcounter{exercise}
+  \newenvironment{exercise}[1]{\refstepcounter{exercise}\label{ex\theexercise}\section*{Exercise \theexercise \hfill (#1 Points)}}{}
+  \checkfor{isexercise}{
+    % Theoretical exercise
+    \excludecomment{solution}
+    \excludecomment{onlysolution}
+    \newenvironment{onlyexercise}{}{}
+    \newcommand{\extitle}{Exercise Sheet}
+  }{
+    % Theoretical solution
+    \newenvironment{solution}{\label{sol\theexercise}\subsection*{Solution: \hrulefill}}{}
+    \newenvironment{onlysolution}{}{}
+    \excludecomment{onlyexercise}
+    \newcommand{\extitle}{Solution}
+  }
+}
+
+% Define header
+\pagestyle{fancy}
+\fancyhf{} % Clear all headers
+\setlength{\headsep}{25pt}
+\cfoot{\thepage} % Page numbers
+\lhead{ % Header-Definition
+  % Logo
+  \begin{tabular}[b]{l l}
+      \multirow{2}{38mm}{
+        \raisebox{-3.6mm}[0pt][0pt]{
+          \includegraphics[height=14mm]{../i2}
+        }
+      }
+      & Lehrstuhl f{\"u}r Informatik 2 \\
+      & Software Modeling and Verification
+    \end{tabular}
+}
+\rhead{ % Header-Definition
+  % Course name
+  \begin{tabular}[b]{r}
+    Compiler Construction 2025\\
+    \extitle{} \exnumber
+  \end{tabular}
+}
+\AtBeginDocument{
+  \vspace*{-30pt}
+  apl.\ Prof.\ Dr.\ Thomas Noll\hfill Daniel Zilken, Roy Hermanns
+  \vspace{5mm}
+}
+
+
+\newcommand{\header}[1]{
+  % Header
+  \begin{center}
+    {\huge \textbf{Compiler Construction 2025}}\\
+    \vspace*{1\baselineskip}%
+    {\huge \textbf{--- \extitle{} \exnumber{} ---}}\\
+    \checkfor{isexercise}{
+      \vspace*{1\baselineskip}
+      \checkfor{isprog}{
+        %Upload in Moodle until #1 before the exercise class.
+      }{
+        Upload in Moodle or hand in until #1 before the exercise class.
+      }
+    }{}
+    \vspace*{1.5\baselineskip}
+    \hrule
+  \end{center}
+}
+
+% Change numbering to (a) and (i)
+\renewcommand{\labelenumi}{(\alph{enumi})}
+\renewcommand{\labelenumii}{(\roman{enumii})}
+
+% Custom commands
+\newcommand{\TODO}[1]{\color{red}\textbf{TODO:} #1\color{black}}
+
+% Macros
+\newcommand{\set}[1]{\ensuremath{\left\{ #1 \right\}}}
+\newcommand{\Nats}{\ensuremath{\mathbb{N}}}
+\newcommand{\Reals}{\ensuremath{\mathbb{R}}}
+
+\newcommand{\PTIME}{\mbox{\rm PTIME}}
+\newcommand{\PSPACE}{\mbox{\rm PSPACE}}
+\newcommand{\coNP}{\mbox{\rm coNP}}
+\newcommand{\NP}{\mbox{\rm NP}}
+\newcommand{\poly}{\mbox{\rm poly}}
+\newcommand{\coPTIME}{\mbox{\rm coPTIME}}
+\newcommand{\coPSPACE}{\mbox{\rm coPSPACE}}
+\newcommand{\NPSPACE}{\mbox{\rm NPSPACE}}
+\def\EXPTIME{\text{\rm EXPTIME}}
+\def\doubleEXPTIME{\text{\rm 2EXPTIME}}
+
+% Lecture specific commands
+\renewcommand{\L}{{\cal L}}
+\newcommand{\numberone}{\ensuremath{\set{1, \dots, 9}}}
+\newcommand{\numberzero}{\ensuremath{\set{0, \dots, 9}}}
+\newcommand{\eps}{\ensuremath{\varepsilon}}
+\newcommand{\sem}[1]{\llbracket#1\rrbracket}
+\newcommand{\la}{\ensuremath{\textsf{la}}}
+\newcommand{\fir}{\ensuremath{\textsf{fi}}}
+\newcommand{\first}{\ensuremath{\textsf{first}}}
+\newcommand{\fo}{\ensuremath{\textsf{fo}}}
+\newcommand{\follow}{\ensuremath{\textsf{follow}}}
+\newcommand{\cyl}[1]{\ensuremath{\mathit{Cyl}(#1)}}
+\newcommand{\icompiler}[0]{\texttt{i2Compiler}}
+\newcommand{\while}[0]{\textit{WHILE}\xspace}
+

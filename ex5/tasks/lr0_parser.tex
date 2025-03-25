@@ -1,0 +1,121 @@
+\begin{exercise}{20}
+Consider the grammar $G = (N, \Sigma, P, S')$ for a fictional assembler-like programming language consisting of assignments ($as$) to a register with postfix operations ($post$):
+
+\newcommand{\eof}{eo\!f}
+
+\begin{itemize}
+       \item $N := \set{S', S, A, E}$
+       \item $\Sigma := \set{ \eof, as, sem, post, id}$
+       \item
+        $\begin{array}[t]{lcl}
+        S' &\to& S\\
+        S &\to& A\ S \mid A\ \eof\\
+        A &\to& as\ E\ sem\\
+        E &\to& E\ E\ post \mid id\\
+       \end{array}$
+\end{itemize}
+
+\begin{enumerate}[(a)]
+    \item Compute all $LR(0)$ sets of $G$.
+
+    \item Specify the (deterministic) $LR(0)$ parsing automaton of $G$ (cf.\ Definition~10.4).
+    In particular, specify the parsing table (cf.\ Example~10.3). \\ \\
+    %
+    \noindent
+    \emph{
+    Do not forget to give a numbering to the grammar rules.}
+
+    \item Provide a run of the automaton on the input $as\ id\ id\ post\ sem\ as\ id\ sem\ \eof$.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\newcommand{\eof}{eo\!f}
+
+\[
+ \begin{array}{llcl}
+  0. & S' & \to & S\\
+  1. & S & \to & A\ S\\
+  2. & S & \to & A\ \eof \\
+  3. & A & \to & as\ E\ sem \\
+  4. & E & \to & E\ E\ post \\
+  5. & E & \to & id \\
+ \end{array}
+\]
+
+\begin{enumerate}[(a)]
+  \item The $LR(0)$ sets:
+\[
+  \begin{array}{rll}
+  I_0 &:= LR(0)(\varepsilon): & [S' \to \cdot\ S], [S \to \cdot\ A\ S], [S \to \cdot\ A\ \eof], [A \to \cdot\ as\ E\ sem]\\
+  I_1 &:= LR(0)(S): & [S' \to S\ \cdot]\\
+  I_2 &:= LR(0)(A): & [S \to A\ \cdot\ S], [S \to A\ \cdot\ \eof], [S \to\ \cdot\ A\ S], [S \to\ \cdot\ A\ \eof],\\
+                    && [A \to\ \cdot\ as\ E\ sem]\\
+  I_3 &:= LR(0)(as): & [A \to as\ \cdot\ E\ sem], [E \to\ \cdot\ E\ E\ post], [E \to\ \cdot\ id]\\
+  I_4 &:= LR(0)(A\ S): & [S \to A\ S\ \cdot]\\
+  I_5 &:= LR(0)(A\ \eof): & [S \to A\ \eof\ \cdot]\\
+  I_6 &:= LR(0)(as\ E): & [A \to as\ E\ \cdot\ sem], [E \to E\ \cdot\ E\ post],\\
+                        && [E \to\ \cdot\ E\ E\ post], [E \to\ \cdot\ id]\\
+  I_7 &:= LR(0)(as\ id): & [E \to id\ \cdot]\\
+  I_8 &:= LR(0)(as\ E\ sem): & [A \to as\ E\ sem\ \cdot]\\
+  I_9 &:= LR(0)(as\ E\ E): & [E \to E\ E\ \cdot\ post], [E \to E\ \cdot\ E\ post], \\
+                           && [E \to \cdot\ E\ E\ post], [E \to \cdot\ id]\\
+  I_{10} &:= LR(0)(as\ E\ E\ post): & [E \to E\ E\ post\ \cdot]\\
+  I_{11} &:= LR(0)(\gamma): & \emptyset
+  \end{array}
+\]
+  \item The (deterministic) $LR(0)$ parsing automaton of $G$:
+\begin{itemize}
+  \item Input alphabet: $\Sigma$
+  \item Pushdown alphabet: $\Gamma = \set{I_0, \dots, I_{11}}$
+  \item Output alphabet: $\Delta = \set{0,1,2,3,4,5, \mathtt{error}}$
+  \item Configurations: $\Sigma^* \times \Gamma^* \times \Delta^*$
+  \item Initial configuration: $(w, I_0, \varepsilon)$ for $w \in \Sigma^*$
+  \item Final configuration: $\set{\varepsilon} \times \set{\varepsilon} \times \Delta^*$
+  \item Transitions: parsing table as follows (Empty entries stand for $I_{11}$).
+\end{itemize}
+
+    \begin{center}
+    \begin{tabular}{c | c | c c c c c c c c }
+      LR(0)(G) & act    & \multicolumn{8}{c}{goto}\\
+               &        & $S$ & $A$ & $E$ & $\eof$ & $as$ & $sem$ & $post$ & $id$\\
+      \hline
+      $I_0$    & shift  & $I_1$ & $I_2$ &  & & $I_3$ & \\
+      $I_1$    & \texttt{accept} &\\
+      $I_2$    & shift  & $I_4$ & $I_2$ & & $I_5$ & $I_3$ & \\
+      $I_3$    & shift  & & & $I_6$ & & & &  & $I_7$ \\
+      $I_4$    & red 1  & \\
+      $I_5$    & red 2  & \\
+      $I_6$    & shift  & & & $I_9$ & & & $I_8$ & & $I_7$\\
+      $I_7$    & red 5  & \\
+      $I_8$    & red 3  & \\
+      $I_9$    & shift  & & & $I_9$ & & & & $I_{10}$ & $I_7$ \\
+      $I_{10}$ & red 4  & \\
+      $I_{11}$ & \texttt{error} &
+    \end{tabular}
+    \end{center}
+
+    \item An accepting run on the input $as\ id\ id\ post\ sem\ as\ id\ sem\ \eof$ is as follows:
+    \begin{align*}
+      (&& as\ id\ id\ post\ sem\ as\ id\ sem\ \eof, &I_0, &&\varepsilon &)\\
+      \vdash (&& id\ id\ post\ sem\ as\ id\ sem\ \eof, &I_0\ I_3, &&\varepsilon &)\\
+      \vdash (&& id\ post\ sem\ as\ id\ sem\ \eof, &I_0\ I_3\ I_7, &&\varepsilon &)\\
+      \vdash (&& id\ post\ sem\ as\ id\ sem\ \eof, &I_0\ I_3\ I_6, && 5 &)\\
+      \vdash (&& post\ sem\ as\ id\ sem\ \eof, &I_0\ I_3\ I_6\ I_7, && 5 &)\\
+      \vdash (&& post\ sem\ as\ id\ sem\ \eof, &I_0\ I_3\ I_6\ I_9, && 55 &)\\
+      \vdash (&& sem\ as\ id\ sem\ \eof, &I_0\ I_3\ I_6\ I_9\ I_{10}, && 55 &)\\
+      \vdash (&& sem\ as\ id\ sem\ \eof, &I_0\ I_3\ I_6, && 554 &)\\
+      \vdash (&& as\ id\ sem\ \eof, &I_0\ I_3\ I_6\ I_8, && 554 &)\\
+      \vdash (&& as\ id\ sem\ \eof, &I_0\ I_2, && 5543 &)\\
+      \vdash (&& id\ sem\ \eof, &I_0\ I_2\ I_3, && 5543 &)\\
+      \vdash (&& sem\ \eof, &I_0\ I_2\ I_3\ I_7, && 5543 &)\\
+      \vdash (&& sem\ \eof, &I_0\ I_2\ I_3\ I_6, && 55435 &)\\
+      \vdash (&& \eof, &I_0\ I_2\ I_3\ I_6\ I_8, && 55435 &)\\
+      \vdash (&& \eof, &I_0\ I_2\ I_2, && 554353 &)\\
+      \vdash (&& \varepsilon, &I_0\ I_2\ I_2\ I_5, && 554353 &)\\
+      \vdash (&& \varepsilon, &I_0\ I_2\ I_4, && 5543532 &)\\
+      \vdash (&& \varepsilon, &I_0\ I_1, && 55435321 &)\\
+      \vdash (&& \varepsilon, &\varepsilon, && 554343210 &)\\
+    \end{align*}
+\end{enumerate}
+\end{solution}

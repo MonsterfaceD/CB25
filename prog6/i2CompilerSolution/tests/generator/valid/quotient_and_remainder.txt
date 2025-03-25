@@ -1,0 +1,20 @@
+write("Enter dividend: ");
+int dividend;
+dividend = 12345678;
+
+write("Enter divisor: ");
+int divisor;
+divisor = 314;
+
+// Computes quotient
+int quotient;
+quotient = dividend / divisor;
+
+// Computes remainder
+int remainder;
+remainder = dividend % divisor;
+
+write("Quotient = ");
+write(quotient);
+write(" and Remainder = ");
+write(remainder);

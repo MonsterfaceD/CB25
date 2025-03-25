@@ -1,0 +1,379 @@
+%
+% Source code
+%
+% \newcommand{\code}[1]{\ensuremath{\mathbf{\mathsf{#1}}}}
+% \newcommand{\code}[1]{\text{\texttt{#1}}}
+\newcommand{\code}[1]{{\bl{\text{\texttt{{\upshape#1}}}}}}
+\newcommand{\Code}[1]{{\alert{\text{\texttt{{\upshape#1}}}}}}
+\newcommand{\lbl}[2]{[#2]^{#1}}
+\newcommand{\DO}{\code{do}}
+\newcommand{\ELSE}{\code{else}}
+\newcommand{\END}{\code{end}}
+% \newcommand{\FOR}{\code{for}}
+\newcommand{\IF}{\code{if}}
+\newcommand{\ITE}[3]{\IF~#1~\THEN~#2~\ELSE~#3~\END}
+% \newcommand{\NIL}{\code{nil}}
+\newcommand{\THEN}{\code{then}}
+% \newcommand{\TO}{\code{to}}
+\newcommand{\WD}[2]{\WHILE~#1~\DO~#2~\END}
+\newcommand{\WHILE}{\code{while}}
+%
+% Sets
+%
+\newcommand{\AExp}{\set{AExp}}
+\newcommand{\AvExp}{\set{AE}}
+\newcommand{\AG}{\set{AG}}
+\newcommand{\AI}{\set{AI}}
+\newcommand{\AM}{\set{AM}}
+\newcommand{\Att}{\set{Att}}
+\newcommand{\BExp}{\set{BExp}}
+\newcommand{\bigO}[1]{\mathcal{O}(#1)}
+\newcommand{\Blk}{\set{Blk}}
+\newcommand{\Block}{\set{Blk}}
+\newcommand{\Bool}{\mathbb{B}}
+\newcommand{\Char}{\Omega}
+\newcommand{\CFG}[1]{\set{CFG}_{#1}}
+\newcommand{\CFL}[1]{\set{CFL}_{#1}}
+\newcommand{\Cmd}{\set{Cmd}}
+\newcommand{\Con}{\set{Con}}
+\newcommand{\Dcl}{\set{Dcl}}
+\newcommand{\Dep}{\set{D}}
+% \newcommand{\DEP}{\mathfrak{D}}
+\newcommand{\DFA}[1]{\set{DFA}_{#1}}
+\newcommand{\DS}{\set{DS}}
+\newcommand{\Env}{\set{Env}}
+\newcommand{\Equ}{\set{E}}
+\newcommand{\EVar}{\set{Ext}}
+\newcommand{\Exp}{\set{Exp}}
+\newcommand{\FP}{\set{FP}}
+\newcommand{\Ide}{\set{Ide}}
+\newcommand{\Inh}{\set{Inh}}
+\newcommand{\Int}{\mathbb{Z}}
+\newcommand{\IR}{\set{IR}}
+\newcommand{\is}{\set{is}}
+\newcommand{\IS}{\set{IS}}
+\newcommand{\IVar}{\set{Int}}
+\newcommand{\Lab}{\set{Lab}}
+\newcommand{\LAG}{\set{LAG}}
+%\newcommand{\LALR}[1]{\set{LALR}(#1)}
+\newcommand{\Lev}{\set{Lev}}
+\newcommand{\LL}[1]{\set{LL}(#1)}
+\newcommand{\Loc}{\set{Loc}}
+\newcommand{\LR}[1]{\set{LR}(#1)}
+\newcommand{\LV}{\set{LV}}
+\newcommand{\MS}{\set{MS}}
+\newcommand{\Nat}{\mathbb{N}}
+\newcommand{\NFA}[1]{\set{NFA}_{#1}}
+\newcommand{\Off}{\set{Off}}
+%\newcommand{\OVar}{\set{Out}}
+\newcommand{\PC}{\set{PC}}
+\newcommand{\Pgm}{\set{Pgm}}
+\newcommand{\PS}{\set{PS}}
+\newcommand{\Rat}{\mathbb{Q}}
+\newcommand{\RE}[1]{\set{RE}_{#1}}
+\newcommand{\Real}{\mathbb{R}}
+\newcommand{\RS}{\set{RS}}
+%\newcommand{\set}[1]{\ensuremath{\mathit{#1}}}
+%\newcommand{\set}[1]{\mathit{#1}}
+\newcommand{\Size}{\set{Size}}
+%\newcommand{\SLR}[1]{\set{SLR}(#1)}
+\newcommand{\SP}{\set{SP}}
+\newcommand{\Stt}{\set{Stt}}
+\newcommand{\Syn}{\set{Syn}}
+\newcommand{\Tab}{\set{Tab}}
+\newcommand{\Trn}{\set{Trn}}
+\newcommand{\Type}{\set{Type}}
+\newcommand{\Val}{\set{V}}
+\newcommand{\VAL}{\set{Val}}
+\newcommand{\Var}{\set{Var}}
+%
+% Mappings
+%
+\newcommand{\act}[1]{%
+  \def\temp{#1}%
+  \map{act}\ifx\empty\temp\else(#1)\fi%
+}
+% \newcommand{\aexpsem}[1]{%
+%   \def\temp{#1}%
+%   \mathfrak{A}\ifx\empty\temp\else\semantics{#1}\fi%
+% }
+\newcommand{\amsem}[1]{%
+  \def\temp{#1}%
+  \ifx\empty\temp\else\semantics{#1}\fi%
+}
+\newcommand{\atrans}[1]{%
+  \def\temp{#1}%
+  \map{at}\ifx\empty\temp\else(#1)\fi%
+}
+\newcommand{\att}[1]{%
+  \def\temp{#1}%
+  \map{att}\ifx\empty\temp\else(#1)\fi%
+}
+\newcommand{\base}[1]{%
+  \def\temp{#1}%
+  \map{base}\ifx\empty\temp\else(#1)\fi%
+}
+% \newcommand{\bexpsem}[1]{%
+%   \def\temp{#1}%
+%   \mathfrak{B}\ifx\empty\temp\else\semantics{#1}\fi%
+% }
+% \newcommand{\blocksem}[1]{%
+%   \def\temp{#1}%
+%   \mathfrak{K}\ifx\empty\temp\else\semantics{#1}\fi%
+% }
+\newcommand{\btrans}[1]{%
+  \def\temp{#1}%
+  \map{bt}\ifx\empty\temp\else(#1)\fi%
+}
+% \newcommand{\cmdsem}[1]{%
+%   \def\temp{#1}%
+%   \mathfrak{C}\ifx\empty\temp\else\semantics{#1}\fi%
+% }
+\newcommand{\ctrans}[1]{%
+  \def\temp{#1}%
+  \map{ct}\ifx\empty\temp\else(#1)\fi%
+}
+\newcommand{\DBA}[1]{\map{DBA}(#1)}
+%\newcommand{\dclsem}[1]{%
+%  \def\temp{#1}%
+%  \mathfrak{D}\ifx\empty\temp\else\semantics{#1}\fi%
+%}
+\newcommand{\dom}[1]{\map{dom}(#1)}
+\newcommand{\DTA}[1]{\map{DTA}(#1)}
+\newcommand{\dtrans}[1]{%
+  \def\temp{#1}%
+  \map{dt}\ifx\empty\temp\else(#1)\fi%
+}
+\newcommand{\etrans}[1]{%
+  \def\temp{#1}%
+  \map{et}\ifx\empty\temp\else(#1)\fi%
+}
+\newcommand{\Eval}[1]{%
+  \def\temp{#1}%
+  \map{eval}\ifx\empty\temp\else(#1)\fi%
+}
+\newcommand{\final}{\map{final}}
+%\newcommand{\first}[2]{%
+%  \def\temp{#2}%
+%  \map{first}_{#1}\ifx\empty\temp\else(#2)\fi%
+%}
+%\newcommand{\fir}[1]{%
+%  \def\temp{#1}%
+%  \map{fi}\ifx\empty\temp\else(#1)\fi%
+%}
+%\newcommand{\flow}{\map{flow}}
+%\newcommand{\follow}[2]{%
+%  \def\temp{#2}%
+%  \map{follow}_{#1}\ifx\empty\temp\else(#2)\fi%
+%}
+%\newcommand{\fol}[1]{%
+%  \def\temp{#1}%
+%  \map{fo}\ifx\empty\temp\else(#1)\fi%
+%}
+\newcommand{\FV}{\map{Var}}
+\newcommand{\gen}{\map{gen}}
+\newcommand{\goto}[1]{%
+  \def\temp{#1}%
+  \map{goto}\ifx\empty\temp\else(#1)\fi%
+}
+\newcommand{\inh}[1]{%
+  \def\temp{#1}%
+  \map{inh}\ifx\empty\temp\else(#1)\fi%
+}
+\newcommand{\ic}[1]{%
+  \def\temp{#1}%
+  \map{trans}\ifx\empty\temp\else(#1)\fi%
+}
+\newcommand{\init}{\map{init}}
+\newcommand{\ktrans}[1]{%
+  \def\temp{#1}%
+  \map{kt}\ifx\empty\temp\else(#1)\fi%
+}
+\newcommand{\kil}{\map{kill}}
+%\newcommand{\la}[1]{%
+%  \def\temp{#1}%
+%  \map{la}\ifx\empty\temp\else(#1)\fi%
+%}
+\newcommand{\lr}[1]{%
+  \def\temp{#1}%
+  \map{lr_0}\ifx\empty\temp\else(#1)\fi%
+}
+\newcommand{\map}[1]{\ensuremath{\mathrm{#1}}}
+\newcommand{\mc}[1]{%
+  \def\temp{#1}%
+  \map{code}\ifx\empty\temp\else(#1)\fi%
+}
+\newcommand{\pgmsem}[1]{%
+  \def\temp{#1}%
+%  \mathfrak{M}\ifx\empty\temp\else\semantics{#1}\fi%
+  \ifx\empty\temp\else\semantics{#1}\fi%
+}
+\newcommand{\sbtrans}[1]{%
+  \def\temp{#1}%
+  \map{sbt}\ifx\empty\temp\else(#1)\fi%
+}
+\newcommand{\sctrans}[1]{%
+  \def\temp{#1}%
+  \map{sct}\ifx\empty\temp\else(#1)\fi%
+}
+\newcommand{\size}[1]{%
+  \def\temp{#1}%
+  \map{size}\ifx\empty\temp\else(#1)\fi%
+}
+%\newcommand{\st}{\map{st}}
+\newcommand{\st}{\sym{st}}
+\newcommand{\syn}[1]{%
+  \def\temp{#1}%
+  \map{syn}\ifx\empty\temp\else(#1)\fi%
+}
+\newcommand{\sync}[1]{%
+  \def\temp{#1}%
+  \map{sync}\ifx\empty\temp\else(#1)\fi%
+}
+\newcommand{\update}[1]{%
+  \def\temp{#1}%
+  \map{update}\ifx\empty\temp\else(#1)\fi%
+}
+\newcommand{\val}[1]{%
+  \def\temp{#1}%
+  v\ifx\empty\temp\else(#1)\fi%
+}
+\newcommand{\vtrans}[1]{%
+  \def\temp{#1}%
+  \map{vt}\ifx\empty\temp\else(#1)\fi%
+}
+\newcommand{\vtype}[1]{%
+  \def\temp{#1}%
+  \map{vtype}\ifx\empty\temp\else(#1)\fi%
+}
+%
+% Automata and grammars
+%
+\newenvironment{automaton}[1]{
+  \begin{tikzpicture}[->,>=triangle 45,shorten >=1pt,auto,node distance={#1},thick,bend angle=20,double distance=2pt]
+  \tikzstyle{every state}=[draw,ellipse,inner sep=3pt,minimum size=10mm]
+  \tikzstyle{initial}=[initial by arrow,initial text={}]
+}{
+  \end{tikzpicture}
+}
+\newenvironment{depgraph}{
+  \begin{tikzpicture}[auto,inner sep=1pt,color=rwth,
+    level distance=25mm,sibling distance=50mm,node distance=10mm]
+    \tikzstyle{every node}=[draw=none]
+    \tikzstyle{edge from parent}=[-,draw,thick]
+}{
+  \end{tikzpicture}
+}
+\newenvironment{syntaxtree}{
+  \begin{tikzpicture}[level distance=12mm,sibling distance=10mm,inner sep=2pt,color=rwth,anchor=base]
+%  \tikzstyle{every node}=[draw=none,text depth=2pt]
+  \tikzstyle{every node}=[draw=none]
+  \tikzstyle{edge from parent}=[-,draw,thick]
+}{
+  \end{tikzpicture}
+}
+\newcommand{\accept}{\token{accept}}
+\newcommand{\ag}{\mathfrak{A}}
+\newcommand{\auto}{\mathfrak{A}}
+\newcommand{\below}[1]{\stackrel{#1}{\hookrightarrow}}
+\newcommand{\bt}{\mathfrak{B}}
+\newcommand{\dep}{\to}
+\newcommand{\dertree}[2]{
+  \begin{syntaxtree}
+    \node [label={[black]right:#1}] {$\nt{Asg}$}
+	    child { node [label={[black]left:#2}] {$\nt{Var}$} }
+	    child { node [label={[black]right:#2}] {$\nt{Exp}$}
+	      child { node [label={[black]right:#2}] {$\nt{Sum}$}
+	        child { node [label={[black]left:#2}] {$\nt{Var}$} }
+	        child { node [label={[black]right:#2}] {$\nt{Con}$} } } };
+	\end{syntaxtree}
+}
+\newcommand{\error}{\token{error}}
+\newcommand{\ilTo}[1]{\stackrel{#1}{\To}_l}
+\newcommand{\irTo}[1]{\stackrel{#1}{\To}_r}
+\newcommand{\lTo}{\To_l}
+\newcommand{\NBA}[1]{\set{NBA}(#1)}
+\newcommand{\NTA}[1]{\set{NTA}(#1)}
+\newcommand{\nt}[1]{\ensuremath{\mathit{#1}}}
+\newcommand{\pop}{\token{pop}}
+\newcommand{\reduce}[1]{\token{red}\,#1}
+\newcommand{\rTo}{\To_r}
+\newcommand{\shift}{\token{shift}}
+\newcommand{\To}{\Rightarrow}
+%\newcommand{\token}[1]{{\color{blue}\text{\textsf{#1}}}}
+\newcommand{\token}[1]{\ensuremath{\mathsf{#1}}}
+\newcommand{\trans}{\vdash}
+%
+% Miscellaneous
+%
+\newcommand{\AND}{\wedge}
+\newcommand{\angles}[1]{\langle#1\rangle}
+\newcommand{\antlr}{\texttt{ANTLR}\xspace}
+%\newcommand{\ao}[1]{\fbox{\sym{\color{black}#1}}}
+\newcommand{\ao}[1]{\fbox{\sym{#1}}}
+\newcommand{\bison}{\texttt{bison}\xspace}
+\newcommand{\bl}[1]{{\color{rwth}#1}}
+\newcommand{\blank}{\char32}
+\newcommand{\ca}{\sym{ca}}
+\newcommand{\contradiction}{\lightning}
+\newcommand{\df}{:=}
+\newcommand{\dif}{\sym{dif}}
+\newcommand{\displayskips}{
+  \addtolength{\abovedisplayshortskip}{-0.75ex}
+  \addtolength{\abovedisplayskip}{-0.75ex}
+  \addtolength{\belowdisplayshortskip}{-0.75ex}
+  \addtolength{\belowdisplayskip}{-0.75ex}
+%  \setlength{\abovedisplayshortskip}{1ex}
+%  \setlength{\abovedisplayskip}{1ex}
+%  \setlength{\belowdisplayshortskip}{1ex}
+%  \setlength{\belowdisplayskip}{1ex}
+}
+\newcommand{\dlink}{\sym{dl}}
+%\newcommand{\eps}{\varepsilon}
+\newcommand{\evf}[2]{\langle#1,\!#2\rangle}
+\newcommand{\FALSE}{\mathbf{\mathsf{false}}}
+\newcommand{\flex}{\texttt{[f]lex}\xspace}
+\newcommand{\fp}{\sym{fp}}
+%\newcommand{\gasag}{%
+%  \gasset{Nadjust=wh,Nadjustdist=1,Nframe=y,ExtNL=n,NLdist=0,AHnb=1, dash={}{0}}%
+%}
+%\newcommand{\gastree}{%
+%  \gasset{Nadjust=wh,Nadjustdist=1,Nframe=n,ExtNL=n,NLdist=0,AHnb=0,dash={2 1}{0}}%
+%}
+\newcommand{\bookref}[3]{#1: \textsl{\color{rwth}#2}, #3}
+\newcommand{\gr}[1]{{\color{green}#1}}
+\newcommand{\ir}{\sym{ir}}
+\newcommand{\ite}[3]{#1\,?\,#2\!:\!#3}
+\newcommand{\larray}[1]{\ltarray{#1}}
+\newcommand{\lcarray}[1]{\begin{array}{@{}l@{}}#1\end{array}}
+\newcommand{\lcltarray}[1]{\begin{array}[t]{@{}l@{~}c@{~}l@{}}#1\end{array}}
+\newcommand{\ltarray}[1]{\begin{array}[t]{@{}l@{}}#1\end{array}}
+\newcommand{\lttab}[1]{\begin{tabular}[t]{@{}l@{}}#1\end{tabular}}
+\newcommand{\lev}{\sym{lev}}
+\newcommand{\litref}[4]{#2: \href{#1}{\textsl{#3}}\ifx#4\empty\else, #4\fi}
+\newcommand{\lng}{L}
+\newcommand{\loc}{\sym{loc}}
+\newcommand{\lrequiv}{\sim_0}
+%\newcommand{\mathwhite}[1]{{\setbeamercolor{math text}{fg=white}\ensuremath{#1}}}
+\newcommand{\off}{\sym{off}}
+\newcommand{\OR}{\vee}
+\newcommand{\param}{\sym{par}}
+% \newcommand{\partto}{\brokenrightarrow}
+\newcommand{\partto}{\dashrightarrow}
+\newcommand{\pc}{\sym{pc}}
+\newcommand{\PLUS}{\mid}
+% \newcommand{\powerset}[1]{\mathfrak{P}(#1)}
+\newcommand{\powerset}[1]{2^{#1}}
+\newcommand{\ra}{\sym{ra}}
+\newcommand{\rcltarray}[1]{\begin{array}[t]{@{}r@{~}c@{~}l@{}}#1\end{array}}
+\newcommand{\re}[1]{{\color{red}#1}}
+\newcommand{\reverse}[1]{\overleftarrow{#1}}
+\newcommand{\semantics}[1]{\llbracket#1\rrbracket}
+\newcommand{\select}[1]{\left\{\begin{array}{@{}ll@{}}#1\end{array}\right.}
+\newcommand{\Select}[1]{\left\{\begin{array}{@{}ll@{\quad}l@{}}#1\end{array}\right.}
+\newcommand{\slink}{\sym{sl}}
+\renewcommand{\sp}{\sym{sp}}
+\newcommand{\sym}[1]{\ensuremath{\mathit{#1}}}
+\newcommand{\TRUE}{\mathbf{\mathsf{true}}}
+\newcommand{\webref}[2]{\href{#1}{\textsl{#2}}}
+\newcommand{\yacc}{\texttt{yacc}\xspace}

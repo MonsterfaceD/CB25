@@ -1,0 +1,53 @@
+\begin{exercise}{40}
+In this task, we develop an attribute grammar for determining spurious assignments in programs, i.e., assignments that can be removed from the program without changing the program's behavior. For that, consider the following context-free grammar $G$ generating (sequences of) assignments.
+
+\vspace{0.3cm}
+
+  \begin{center}
+	$\begin{array}{lcll}
+	  S &\to& ~Cmd &  \\
+	  %
+	  Cmd &\to& ~Cmd;Cmd & \\
+      %
+      &&\mid ~ var \coloneqq Exp \\
+	  Exp &\to& ~num \\
+	  &&\mid ~ var \\
+	  &&\mid ~ Exp + Exp\\
+	\end{array}$
+   \end{center}
+
+Hence, all programs $C$ are of the form $x_1 \coloneqq RHS_1; \ldots; x_n \coloneqq RHS_n$ for some $n\geq 1$. We call the assignment $x_i \coloneqq RHS_i$ \emph{spurious in $C$} if, after executing the assignment, the variable $x_i$ is \emph{not} read before it is overwritten by some subsequent assignment. We assume that all variables occurring in $C$ are output variables, i.e., every variable is read at the end of the program. For instance, consider the program
+%
+\begin{align*}
+   &x \coloneqq 3; \\
+   &y \coloneqq x+1; \\
+   &y\coloneqq 3; \\
+   &z \coloneqq  3
+\end{align*}
+%
+The first assignment is not spurious because $x$ is read in the second assignment. The second assignment is spurious because $y$ is immediately overwritten by the third assignment without being read. The third and fourth assignments are not spurious because we assume that all variables are read at the end of the program. \\ \\
+%
+\noindent 
+Develop an attribute grammar for detecting spurious assignments, i.e, find suitable attributes and semantic rules and explain how a solution to the attribute equation system for a given syntax tree can be used to detect spurious assignments.
+\end{exercise}
+
+\begin{solution}
+We define attributes $liveI$, $liveS$, and $Vars$ where $liveI$ is an inherited attribute and $liveS$, $EVars$, $Vars$ are synthesised attributes.
+
+  \begin{center}
+	$\begin{array}{lcll}
+		S &\to& ~Cmd & liveI.1 = Vars.1    \\
+		%
+		Cmd &\to& ~Cmd;Cmd & Vars.0 = Vars.1 \cup Vars.3\\
+		    &   &          & liveI.3 = liveI.0 \quad liveI.1 = liveS.3 \quad liveS.0 = liveS.1 \\
+		%
+		&&\mid ~ var \coloneqq Exp & Vars.0 = \{id.1\} \cup Vars.3 \quad (liveS.0 = liveI.0 \setminus \{id.1\}) \cup Vars.3 \\
+		Exp &\to& ~num & Vars.0 = \emptyset\\
+		&&\mid ~ var & Vars.0 = \{id.1\}\\
+		&&\mid ~ Exp + Exp & Vars.0 = Vars.1 \cup Vars.3\\
+	\end{array}$
+\end{center}
+%
+We read off from a given syntax tree whether an assignment $x_i \coloneqq RHS_i$ is spurious as follows: let $k_i$ be the parent node of the nodes corresponding to $x_i$, $\coloneqq$, and $RHS_i$. The assignment is spurious if $x_i \not\in liveI.k_i$, because $liveI.k_i$ contains all variables which are read without being overwritten after executing the assignment $x_i \coloneqq RHS_i$.
+
+\end{solution}

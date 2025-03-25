@@ -1,0 +1,173 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Todo for next time:
+% * what about 'It\\'s'?
+% * what about 'The symbol \'?
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{exercise}{15+15+10+10}
+  Let $\Omega$ be the set of all relevant characters in some encoding, e.g. all UTF-8 characters.
+  In particular $\texttt{*}, \texttt{/}, \texttt{\textbackslash}, \texttt{"}, \texttt{\textquotesingle} \in \Omega$.
+  \begin{enumerate}
+    \item[(a)] Provide a regular expression for single-line comments (\texttt{//}) and multi-line comments (\texttt{/* ... */}) in \while (c.f.\ Programming Exercise 1).
+        Please keep in mind that \texttt{*} as well as \texttt{/} may also occur inside of comments.
+        Note that single-line comments are terminated by either a newline symbol \texttt{\textbackslash{}n} (Linux), a carriage return \texttt{\textbackslash{}r} (Mac OS) or both \texttt{\textbackslash{}r\textbackslash{}n} (Windows).
+        Your regular expression should support comments on all three operating systems.
+
+        \begin{minipage}{0.49\textwidth}
+        Examples of \emph{valid comments} are:
+        \begin{itemize}
+            \item \texttt{// comment\textbackslash{}n}
+            \item \texttt{/* comment \textbackslash{}r new line */}
+            \item \texttt{/*foo * bar / */}
+            \item \texttt{// /* test */ more comments\textbackslash{}r\textbackslash{}n}
+        \end{itemize}
+      \end{minipage}
+      \begin{minipage}{0.49\textwidth}
+        Examples of \emph{invalid comments} are:
+        \begin{itemize}
+            \item \texttt{// abc}
+            \item \texttt{/*two*//*comments*/}
+        \end{itemize}
+      \end{minipage}
+
+    \item[(b)] Provide a regular expression capturing a string.
+        Strings begin and end with either double quotation marks (\texttt{"}) or single quotation marks (\texttt{\textquotesingle}).
+        If a string is enclosed by double quotation marks, then single quotation marks are allowed inside the string (and vice versa).
+        Lastly, an escaped quotation mark (\texttt{\textbackslash{}"} or \texttt{\textbackslash{}\textquotesingle}) is also allowed inside a string.
+
+        \begin{minipage}{0.49\textwidth}
+        Examples of \emph{valid strings} are:
+        \begin{itemize}
+            \item \texttt{"string"}
+            \item \texttt{\textquotesingle{}02a\textbackslash{}a\textquotesingle}
+            \item \texttt{"Let\textquotesingle{}s go"}
+            \item \texttt{\textquotesingle{}Let\textbackslash{}\textquotesingle{}s go\textquotesingle}
+        \end{itemize}
+      \end{minipage}
+      \begin{minipage}{0.49\textwidth}
+        Examples of invalid strings are:
+        \begin{itemize}
+            \item \texttt{No string}
+            \item \texttt{"Two""Strings"}
+            \item \texttt{"String}
+            \item \texttt{"He said "No""}
+        \end{itemize}
+      \end{minipage}
+
+    \item[(c)] Derive \emph{one} NFA $A$ that accepts both the languages for a comment or a string as defined in the previous tasks.
+
+    \item[(d)] Prove that $\texttt{"It\textbackslash{}\textquotesingle{}s"} \in L(A)$.
+  \end{enumerate}
+\end{exercise}
+
+\begin{solution}
+In the following we use the set notation $\set{a_1,\ldots,a_n}$ as a shorthand for $a_1 | a_2 | \ldots | a_n$.
+\begin{enumerate}
+  \item[(a)] \begin{align*}
+      \mathcal{L}_{single\_cmt} ~:=~ & \texttt{//} (\Omega \setminus \set{\texttt{\textbackslash{}r}, \texttt{\textbackslash{}n}})^\ast (\texttt{\textbackslash{}n} \mid \texttt{\textbackslash{}r} \mid \texttt{\textbackslash{}r\textbackslash{}n}) \\
+      %\mathcal{L}_{multi\_cmt}  ~:=~ & \texttt{/*} A^\ast (\texttt{*} B A^\ast + \texttt{*})^\ast \texttt{*/} \\
+      \mathcal{L}_{multi\_cmt}  ~:=~ & \texttt{/*} \big(\texttt{/} \mid \texttt{*}^\ast (\Omega \setminus \set{\texttt{*}, \texttt{/}})\big)^\ast \texttt{*}^\ast \texttt{*/} \\
+      \mathcal{L}_{comment}     ~:=~ & \mathcal{L}_{single\_cmt} \mid \mathcal{L}_{multi\_cmt}
+    \end{align*}
+
+  \item[(b)] \begin{align*}
+      \mathcal{L}_{single\_string} ~:=~ & \texttt{\textquotesingle} \big( (\Omega \setminus \set{\texttt{\textquotesingle}, \texttt{\textbackslash{}}}) \mid \texttt{\textbackslash{}} \Omega \big)^\ast \texttt{\textquotesingle} \\
+      \mathcal{L}_{multi\_string}  ~:=~ & \texttt{"} \big( (\Omega \setminus \set{\texttt{"}, \texttt{\textbackslash{}}}) \mid \texttt{\textbackslash{}} \Omega \big)^\ast \texttt{"} \\
+      \mathcal{L}_{string}         ~:=~ & \mathcal{L}_{single\_string} \mid \mathcal{L}_{multi\_string}
+    \end{align*}
+
+  \item[(c)] We use sets as transition labels whenever there is a corresponding transition for every element of that set.
+
+  The NFA for a comment looks as follows:
+  \begin{center}
+  \begin{tikzpicture}[->,>=stealth,shorten >=1pt,auto,node distance=2.5cm]
+    \node[initial, initial text=,state] (N1) {$\varepsilon$};
+    \node[state] (C0) [right of=N1]  {$/$};
+    \node[state] (C1) [right of=C0] {$/*$};
+    \node[state] (C2) [right of=C1] {$q$};
+    \node[state, accepting] (C4) [right of=C2] {$cmts$};
+    \node[state] (C5) [below of=C0] {$//$};
+    \node[state, accepting] (C6) [right of=C5] {$p$};
+
+  \path[->]
+    (N1) edge node {/} (C0)
+    (C0) edge node {*} (C1)
+    (C0) edge node {/} (C5)
+    (C1) edge [loop below] node {$\Omega \setminus \set{\texttt{*}}$} (C1)
+    (C1) edge [bend right] node [below] {*} (C2)
+    (C2) edge [bend right] node [above] {$\Omega \setminus \set{\texttt{*}, \texttt{/}}$} (C1)
+    (C2) edge [loop above] node {*} (C2)
+    (C2) edge node {/} (C4)
+    (C5) edge [loop left] node {$\Omega \setminus \set{\texttt{\textbackslash{}n}, \texttt{\textbackslash{}r}}$} (C5)
+    (C5) edge [bend right=60] node {\texttt{\textbackslash{}n}} (C4)
+    (C5) edge node {\texttt{\textbackslash{}r}} (C6)
+    (C6) edge node [below] {\texttt{\textbackslash{}n}} (C4)
+    ;
+  \end{tikzpicture}
+  \end{center}
+
+  The NFA for a string looks as follows:
+  \begin{center}
+  \begin{tikzpicture}[->,>=stealth,shorten >=1pt,auto,node distance=2.5cm]
+    \node[initial, initial text=,state] (N1) {$\varepsilon$};
+    \node[state] (S1) [above right of=N1] {\textquotesingle};
+    \node[state] (M1) [below right of=N1] {"};
+    \node[state] (S2) [right of=S1] {\textquotesingle\textbackslash{}};
+    \node[state] (M2) [right of=M1] {"\textbackslash{}};
+    \node[state, accepting] (end) [below right of=S2] {str};
+
+  \path[->]
+    (N1) edge node {\texttt{\textquotesingle}} (S1)
+    (N1) edge node {\texttt{"}} (M1)
+    (S1) edge[loop above] node {$\Omega \setminus \set{\texttt{\textquotesingle}, \texttt{\textbackslash}}$} (S1)
+    (M1) edge[loop below] node {$\Omega \setminus \set{\texttt{"}, \texttt{\textbackslash}}$} (M1)
+    (S1) edge[bend left=10] node {\texttt{\textbackslash{}}} (S2)
+    (S2) edge[bend left=10] node {$\Omega$} (S1)
+    (M1) edge[bend left=10] node {\texttt{\textbackslash{}}} (M2)
+    (M2) edge[bend left=10] node {$\Omega$} (M1)
+    (S1) edge[bend right=20] node {\texttt{\textquotesingle}} (end)
+    (M1) edge[bend left=20] node {\texttt{"}} (end)
+    ;
+  \end{tikzpicture}
+  \end{center}
+
+  Combining both NFAs yields the NFA we are looking for:
+  \begin{center}
+  \scalebox{0.8}{
+  \begin{tikzpicture}[->,>=stealth,shorten >=1pt,auto,node distance=2.5cm]
+    \node[initial, initial text=,state] (N1) {$\varepsilon$};
+    \node[state] (S1) [right of=N1] {\textquotesingle};
+    \node[state] (M1) [below of=S1] {"};
+    \node[state] (C1) [above of=S1] {/};
+    \node (dotsC) [right of=C1] {\dots};
+    \node (dotsS) [right of=S1] {\dots};
+    \node (dotsM) [right of=M1] {\dots};
+
+  \path[->]
+    (N1) edge node {\texttt{/}} (C1)
+    (N1) edge node {\texttt{\textquotesingle}} (S1)
+    (N1) edge node {\texttt{"}} (M1)
+    (S1) edge[loop above] node {$\Omega \setminus \set{\texttt{\textquotesingle}, \texttt{\textbackslash}}$} (S1)
+    (M1) edge[loop below] node {$\Omega \setminus \set{\texttt{"}, \texttt{\textbackslash}}$} (M1)
+    (C1) edge node {\dots} (dotsC)
+    (S1) edge node {\dots} (dotsS)
+    (M1) edge node {\dots} (dotsM)
+    ;
+  \end{tikzpicture}
+  }
+  \end{center}
+
+  \item[(d)] The NFA method performs the powerset construction on the fly:
+    \begin{align*}
+               & (\set{\varepsilon}, \texttt{"It\textbackslash{}\textquotesingle{}s"}) \\
+        \vdash & (\set{\text{"}}, \texttt{It\textbackslash{}\textquotesingle{}s"}) \\
+        \vdash & (\set{\text{"}}, \texttt{t\textbackslash{}\textquotesingle{}s"}) \\
+        \vdash & (\set{\text{"}}, \texttt{\textbackslash{}\textquotesingle{}s"}) \\
+        \vdash & (\set{\text{"}\backslash}, \texttt{\textquotesingle{}s"}) \\
+        \vdash & (\set{\text{"}}, \texttt{s"}) \\
+        \vdash & (\set{\text{"}}, \texttt{"}) \\
+        \vdash & (\set{\text{str}}, \varepsilon)
+    \end{align*}
+\end{enumerate}
+\end{solution}

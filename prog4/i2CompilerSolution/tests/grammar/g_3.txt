@@ -1,0 +1,5 @@
+S' -> S EOF
+S -> A a | B b | C c
+A -> b A | c A | b | c
+B -> a B | c B | a | c
+C -> a C | b C | a | b

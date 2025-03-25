@@ -1,0 +1,48 @@
+\begin{exercise}{20}
+      Complete the correctness proof of %Theorem~5.15
+      Theorem~6.3 by showing the direction omitted in the lecture.
+      %
+      More precisely, let $G = \langle N, \Sigma, P, S \rangle \in \textnormal{CFG}_{\Sigma}$ and $NTA(G)$ as in %Definition~5.13.
+      Definition~6.1.
+      %
+      Show that for each $w \in \Sigma^{*}$ and $z \in [p]^{*}$ it holds that
+      \begin{align*}
+         (w,S,\varepsilon) ~\vdash^{*}~ (\varepsilon,\varepsilon,z)  \quad\text{implies}~\quad z~\text{is a leftmost analysis of}~w.
+      \end{align*}
+\end{exercise}
+
+\begin{solution}
+We prove a stronger statement: For all $z \in [p]^*, w =uv, \alpha = uA\beta$ with $A \in N \cup \{\epsilon\}$,
+
+$$(uv, \alpha, y) \vdash^* (\varepsilon, \varepsilon, yz) \text{ implies } \alpha \to_l^z w ~.$$
+
+The proof is by induction over $n = |z|$:\\
+
+$\bf{n=0}$: then $\alpha = w$ as there may only be matching steps and thus
+$$(w, w, y) \vdash^* (\varepsilon, \varepsilon, y) \text{ implies } w \to_l^\varepsilon w$$
+
+$\bf{n \to n+1}$: for $z = iz'$ we know from induction that if
+	$(w', \alpha', y') \vdash^* (\varepsilon, \varepsilon, y'z')$
+	then $\alpha' \to_l^{z'} w'$.\\
+
+	Let $\alpha = uA\beta$, $w = uv$, where $u, v \in \Sigma^*$	and let $\pi(i) = A \to \gamma$.
+    Then
+    $$(w, \alpha, y) = (uv, uA\beta, y) \vdash^* (v, A\beta, y) \vdash (v, \gamma\beta, yi)$$
+    We know from the premise of the induction hypothesis that $(w', \alpha', y') \vdash^* (\varepsilon, \varepsilon, y'z')$.\\
+    Let $w'=v$, $\alpha'=\gamma\beta$, $y'=yi$.
+    Then
+    $$(v, \gamma\beta, yi) \vdash^* (\varepsilon, \varepsilon, yiz')$$
+
+The above implies:
+\begin{center}
+$\begin{array}{rlrlll}
+&& \alpha' &\to_l^{z'}& w' & \text{(from induction hypothesis)}\\
+&& \gamma\beta &\to_l^{z'}& v & (\alpha'=\gamma\beta, w'=v) \\
+&& u\gamma\beta &\to_l^{z'}& uv = w & \\
+\alpha = uA\beta &\to^i_l& u\gamma\beta
+ &\to_l^{z'}& uv = w & (\text{as }\pi(i) = A \to \gamma) \\
+\multicolumn{3}{r}{\alpha = uA\beta} &\to_l^{iz'=z}& uv = w &
+\end{array}$
+\end{center}
+\end{solution}
+

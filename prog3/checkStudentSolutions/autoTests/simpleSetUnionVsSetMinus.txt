@@ -1,0 +1,19 @@
+# Union = |
+# Minus = -
+#
+# Testcase 1.A
+{a} - ({a} | {b})
+a
+false
+# Testcase 1.B
+{a} - ({a} | {b})
+b
+false
+# Testcase 2.A
+({a,b} | {a,b}) - {a}
+a
+false
+# Testcase 2.B
+({a,b} | {a,b}) - {a}
+b
+true

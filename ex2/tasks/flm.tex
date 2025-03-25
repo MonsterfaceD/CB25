@@ -1,0 +1,187 @@
+\begin{exercise}{10+10+5+5+10}
+  Let $\Sigma :=(\texttt{a} \mid \ldots \mid \texttt{z})$ be the set of letters, $N := (\texttt{0} \mid \texttt{1} \mid \ldots \mid \texttt{9})$ the set of digits, and $\Omega := \Sigma \cup N \cup \set{\texttt{+}, \texttt{-}, \texttt{.}}$ the set of all symbols.
+
+  Consider the four regular expressions $\alpha_1, \alpha_2, \alpha_3$ and $\alpha_4$ defined as:
+    \begin{align*}
+        \alpha_1 &= \texttt{-} \\
+        \alpha_2 &= \texttt{+} \\
+        \alpha_3 &= \Sigma^+ \\
+        \alpha_4 &= N \mid N\texttt{.}N \mid N\texttt{.}N \texttt{e} (\texttt{-} \mid \texttt{+}) N^+
+    \end{align*}
+    \emph{Hint}: The symbol \texttt{.} in $\alpha_4$ corresponds to the dot character and is \emph{not} the concatenation symbol.
+  \begin{enumerate}[(a)]
+    \item For each regular expression $\alpha_i, i=1, \dots, 4$, construct a DFA $\mathfrak{A}_i$ such that $\mathcal{L}(\mathfrak{A}_i) = \sem{\alpha_i}$.
+    \item Construct the product automaton $\mathfrak{A} = \mathfrak{A}_1 \otimes \mathfrak{A}_2 \otimes \mathfrak{A}_3 \otimes \mathfrak{A}_4$.\\
+        \emph{Hint}: It suffices to depict the reachable fragment of the product automaton.
+    \item Determine the first-match partitioning of the set of final states in $\mathfrak{A}$ for the ordering $(\alpha_1, \alpha_2, \alpha_3, \alpha_4)$.
+    \item Determine the set of productive states in $\mathfrak{A}$.
+    \item Compute the run of the backtracking DFA of $\mathfrak{A}$ for input \texttt{-0.2e+fa}. Provide the run by giving the corresponding configurations.
+  \end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\begin{enumerate}[(a)]
+  \item
+    Let $\Omega := \Sigma \cup N \cup \set{\texttt{+}, \texttt{-}, \texttt{.}}$.
+    The DFAs look as follows:\\
+    \begin{minipage}{.3\textwidth}
+      $\mathfrak{A}_1:$\\
+      \begin{tikzpicture}[->,shorten >=1pt,auto,thick,node distance=2.5cm]
+        \tikzstyle{every state}=[draw=black,text=black, minimum width = .7cm]
+
+        \node[state, initial, initial text=] (0) at (0,0) {$m_0$};
+        \node[state, accepting] (1) at (2,0) {$m_1$};
+        \node[state] (b) at (2,-2) {$m_\bot$};
+
+        \path[every node/.style={font=\sffamily\small}]
+          (0) edge node[above] {\texttt{-}} (1)
+          (0) edge node[below left] {$\Omega \setminus \set{\texttt{-}}$} (b)
+          (1) edge node {$\Omega$} (b)
+          (b) edge[loop left] node[left] {$\Omega$} (b)
+        ;
+      \end{tikzpicture}
+    \end{minipage}%
+    \begin{minipage}{.3\textwidth}
+      $\mathfrak{A}_2:$\\
+      \begin{tikzpicture}[->,shorten >=1pt,auto,thick,node distance=2.5cm]
+        \tikzstyle{every state}=[draw=black,text=black, minimum width = .7cm]
+
+        \node[state, initial, initial text=] (0) at (0,0) {$p_0$};
+        \node[state, accepting] (1) at (2,0) {$p_1$};
+        \node[state] (b) at (2,-2) {$p_\bot$};
+
+        \path[every node/.style={font=\sffamily\small}]
+          (0) edge node[above] {\texttt{+}} (1)
+          (0) edge node[below left] {$\Omega \setminus \set{\texttt{+}}$} (b)
+          (1) edge node {$\Omega$} (b)
+          (b) edge[loop left] node[left] {$\Omega$} (b)
+        ;
+      \end{tikzpicture}
+    \end{minipage}%
+    \begin{minipage}{.4\textwidth}
+      $\mathfrak{A}_3:$\\
+      \begin{tikzpicture}[->,shorten >=1pt,auto,thick,node distance=2.5cm]
+        \tikzstyle{every state}=[draw=black,text=black, minimum width = .7cm]
+
+        \node[state, initial, initial text=] (0) at (0,0) {$s_0$};
+        \node[state, accepting] (1) at (2,0) {$s_1$};
+        \node[state] (b) at (2,-2) {$s_\bot$};
+
+        \path[every node/.style={font=\sffamily\small}]
+          (0) edge node[above] {$\Sigma$} (1)
+          (1) edge[loop right] node[right] {$\Sigma$} (1)
+          (0) edge node[below left] {$\Omega \setminus \Sigma$} (b)
+          (1) edge node {$\Omega \setminus \Sigma$} (b)
+          (b) edge[loop left] node[left] {$\Omega$} (b)
+        ;
+      \end{tikzpicture}
+    \end{minipage}
+    \begin{minipage}{.5\textwidth}
+      $\mathfrak{A}_4:$\\
+      \begin{tikzpicture}[->,shorten >=1pt,auto,thick,node distance=2.5cm]
+        \tikzstyle{every state}=[draw=black,text=black, minimum width = .7cm]
+
+        \node[state, initial, initial text=] (0) at (0,0) {$n_0$};
+        \node[state, accepting] (1) at (3,0) {$n_1$};
+        \node[state] (2) at (6,0) {$n_2$};
+        \node[state, accepting] (3) at (9,0) {$n_3$};
+        \node[state] (4) at (9,-2) {$n_4$};
+        \node[state] (5) at (9,-4) {$n_5$};
+        \node[state, accepting] (6) at (9,-6) {$n_6$};
+        \node[state] (b) at (4.5,-3) {$s_\bot$};
+
+        \path[every node/.style={font=\sffamily\small}]
+          (0) edge node[above] {$N$} (1)
+          (1) edge node[above] {\texttt{.}} (2)
+          (2) edge node[above] {$N$} (3)
+          (3) edge node[right] {\texttt{e}} (4)
+          (4) edge node[right] {\texttt{-}, \texttt{+}} (5)
+          (5) edge node[right] {$N$} (6)
+          (6) edge[loop right] node[right] {$N$} (6)
+          (0) edge[below left] node {$\Omega \setminus N$} (b)
+          (1) edge[below left] node[very near start] {$\Omega \setminus \set{\texttt{.}}$} (b)
+          (2) edge[left] node[very near start] {$\Omega \setminus N$} (b)
+          (3) edge[below right] node {$\Omega \setminus \set{\texttt{e}}$} (b)
+          (4) edge[below] node {$\Omega \setminus \set{\texttt{-}, \texttt{+}}$} (b)
+          (5) edge[below] node {$\Omega \setminus N$} (b)
+          (6) edge node {$\Omega \setminus N$} (b)
+          (b) edge[loop left] node[left] {$\Omega$} (b)
+        ;
+      \end{tikzpicture}
+    \end{minipage}
+
+  \item
+    The (reachable fragment of the) product automaton $\mathfrak{A} = \mathfrak{A_1} \otimes \mathfrak{A_2} \otimes \mathfrak{A_3} \otimes \mathfrak{A_4}$ looks as follows:
+    \begin{center}
+      \begin{tikzpicture}[->,shorten >=1pt,auto,thick,node distance=2.5cm]
+        \tikzstyle{every state}=[draw=black,text=black, minimum width = .7cm]
+
+        \node[state, initial, initial text=] (0) at (0,0) {$n_0$};
+        \node[state, accepting] (1) at (3,0) {$n_1$};
+        \node[state] (2) at (6,0) {$n_2$};
+        \node[state, accepting] (3) at (9,0) {$n_3$};
+        \node[state] (4) at (9,-2) {$n_4$};
+        \node[state] (5) at (9,-4) {$n_5$};
+        \node[state, accepting] (6) at (9,-6) {$n_6$};
+        \node[state] (b) at (4.5,-3) {$\bot$};
+        \node[state, accepting] (m1) at (1,-2) {$m_1$};
+        \node[state, accepting] (p1) at (0,-3) {$p_1$};
+        \node[state, accepting] (s1) at (-1,-4) {$s_1$};
+
+        \path[every node/.style={font=\sffamily\small}]
+          (0) edge node[above] {$N$} (1)
+          (1) edge node[above] {\texttt{.}} (2)
+          (2) edge node[above] {$N$} (3)
+          (3) edge node[right] {\texttt{e}} (4)
+          (4) edge node[right] {\texttt{-}, \texttt{+}} (5)
+          (5) edge node[right] {$N$} (6)
+          (6) edge[loop right] node[right] {$N$} (6)
+          (1) edge[below left] node[very near start] {$\Omega \setminus \set{\texttt{.}}$} (b)
+          (2) edge[left] node[very near start] {$\Omega \setminus N$} (b)
+          (3) edge[below right] node {$\Omega \setminus \set{\texttt{e}}$} (b)
+          (4) edge[below] node {$\Omega \setminus \set{\texttt{-}, \texttt{+}}$} (b)
+          (5) edge[below] node {$\Omega \setminus N$} (b)
+          (6) edge node {$\Omega \setminus N$} (b)
+          (0) edge node[left] {\texttt{+}} (p1)
+          (0) edge node[left] {\texttt{-}} (m1)
+          (0) edge node[left] {$\Sigma$} (s1)
+          (0) edge[below left] node[near start] {$\texttt{.}$} (b)
+          (s1) edge[loop left] node[left] {$\Sigma$} (s1)
+          (p1) edge node[below, near start] {$\Omega$} (b)
+          (m1) edge node[below, near start] {$\Omega$} (b)
+          (s1) edge node[below] {$\Omega \setminus \Sigma$} (b)
+          (b) edge[loop below] node[below] {$\Omega$} (b)
+        ;
+
+      \end{tikzpicture}
+    \end{center}
+
+  \item
+    The partitioning of the final states $F=\set{m_1, p_1, n_1, n_6, s_1}$ into the \emph{first match} partitioning is $F_1 =\set{m_1}$, $F_2 =\set{p_1}$, $F_3 =\set{s_1}$, and $F_4=\set{n_1, n_3, n_6}$.
+
+  \item
+    All depicted states are reachable and the only non-productive state is the bottom state $\bot$.
+
+  \item
+    The run is:
+    \begin{align*}
+               & (N,   n_0 \texttt{-0.2e+fa}, \varepsilon) \\
+        \vdash & (T_1, m_1 \texttt{0.2e+fa}, \varepsilon) \\
+        \vdash & (N,   n_0 \texttt{0.2e+fa}, T_1) \\
+        \vdash & (T_4, n_1 \texttt{.2e+fa}, T_1) \\
+        \vdash & (T_4, \texttt{.}n_2 \texttt{2e+fa}, T_1) \\
+        \vdash & (T_4, n_3 \texttt{e+fa}, T_1) \\
+        \vdash & (T_4, \texttt{e}n_4 \texttt{+fa}, T_1) \\
+        \vdash & (T_4, \texttt{e+}n_5 \texttt{fa}, T_1) \\
+        \vdash & (N,   n_0 \texttt{e+fa}, T_1T_4) \\
+        \vdash & (T_3, s_1 \texttt{+fa}, T_1T_4) \\
+        \vdash & (N, n_0 \texttt{+fa}, T_1T_4T_3) \\
+        \vdash & (T_2, p_1 \texttt{fa}, T_1T_4T_3) \\
+        \vdash & (N, n_0 \texttt{fa}, T_1T_4T_3T_2) \\
+        \vdash & (T_3, s_1 \texttt{a}, T_1T_4T_3T_2) \\
+        \vdash & (T_3, s_1, T_1T_4T_3T_2) \\
+        \vdash & \textbf{output: }T_1T_4T_3T_2T_3
+    \end{align*}
+\end{enumerate}
+\end{solution}
+

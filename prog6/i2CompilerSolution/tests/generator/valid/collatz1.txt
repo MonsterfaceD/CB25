@@ -1,0 +1,14 @@
+int x;
+x = 24;
+while (x > 1) {
+    write(x);
+    if (x % 2 == 0) {
+        // Even
+        x = x / 2;
+    } else {
+        // Odd
+        x = 3 * x;
+        x = x + 1;
+    }
+}
+write(x);

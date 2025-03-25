@@ -1,0 +1,50 @@
+\begin{exercise}{30}
+ Consider the context-free grammar $G$ given by the following rules:
+ \begin{align*}
+    S  ~\to~ a ~|~ (\,S\,) ~|~ S \cdot S ~|~ S + S ~|~ -S
+ \end{align*}
+ \begin{enumerate}[(a)]
+  \item Provide a leftmost analysis of the string $a \cdot (-a + (a))$.
+  \item Provide a rightmost analysis of the string $a \cdot (-a + (a))$.
+  \item Prove or disprove: $G$ is unambiguous.
+ \end{enumerate}
+\end{exercise}
+
+\begin{solution}
+ We enumerate the rules from left to right starting with $1$.
+
+\begin{enumerate}[(a)]
+ \item
+ \begin{align*}
+                         & S \\
+   ~\Rightarrow_{l}^{3}~ & S \cdot S \\
+   ~\Rightarrow_{l}^{1}~ & a \cdot S \\
+   ~\Rightarrow_{l}^{2}~ & a \cdot (\,S\,) \\
+   ~\Rightarrow_{l}^{5}~ & a \cdot (\,-S\,) \\
+   ~\Rightarrow_{l}^{4}~ & a \cdot (\,-S + S\,) \\
+   ~\Rightarrow_{l}^{1}~ & a \cdot (\,-a + S\,) \\
+   ~\Rightarrow_{l}^{2}~ & a \cdot (\,-a + (\,S\,)\,) \\
+   ~\Rightarrow_{l}^{1}~ & (\,-a + (\,a\,)\,)
+ \end{align*}
+ Hence, a leftmost analysis of $a \cdot (-a + (a))$ is $z_{l} = 31254121$.
+
+ \item
+ \begin{align*}
+                         & S \\
+   ~\Rightarrow_{r}^{3}~ & S \cdot S \\
+   ~\Rightarrow_{r}^{2}~ & S \cdot (\,S\,) \\
+   ~\Rightarrow_{r}^{4}~ & S \cdot (\,S + S\,) \\
+   ~\Rightarrow_{r}^{2}~ & S \cdot (\,S + (\,S\,)\,) \\
+   ~\Rightarrow_{r}^{1}~ & S \cdot (\,S + (\,a\,)\,) \\
+   ~\Rightarrow_{r}^{5}~ & S \cdot (\,-S + (\,a\,)\,) \\
+   ~\Rightarrow_{r}^{1}~ & S \cdot (\,-a + (\,a\,)\,) \\
+   ~\Rightarrow_{r}^{1}~ & a \cdot (\,-a + (\,a\,)\,)
+ \end{align*}
+ Hence, a rightmost analysis of $a \cdot (-a + (a))$ is $z_{r} = 32421511$.
+
+ \item
+ $G$ is ambiguous. For example, there exist two leftmost analysis for the word from part (a) $a \cdot (-a + (a))$, namely
+ $z_1 = 31254121$ and $z_2 = 31245121$.
+\end{enumerate}
+
+\end{solution}

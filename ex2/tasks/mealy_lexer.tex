@@ -1,0 +1,137 @@
+\begin{exercise}{10+15}
+Since there are languages that can not be lexically analysed using the longest-matching principle, we derive an alternative automata model for the lexical analysis. For that, we use nondeterminstic Mealy-Automata (NMA). An NMA is a 6 tuple $\mathcal{M}=(Q, \Omega, \Sigma, \Delta, q_0, F)$ where:
+\begin{itemize}
+    \item $Q$ is a finite set of all states,
+    \item $\Omega$ is a set of input symbols,
+    \item $\Sigma$ is a set of output symbols (with $\epsilon \not\in \Sigma$),
+    \item $\Delta \subseteq Q \times \Omega \times (\Sigma \cup \{\epsilon\}) \times Q$ is a transition relation,
+    \item $q_0 \in Q$ is the initial state, and
+    \item $F \subseteq Q$ is the set of final states.
+\end{itemize} 
+%
+NMAs extend nondeterministic finite automata by \emph{outputs}:
+Given an (input) word $w \in \Omega^*$, an NMA $\mathcal{M}$ determines a language of (output) words $O \subseteq \Sigma^*$ as follows:
+An accepting run of $\mathcal{M}$ on a word $w\in \Omega^*$  starts in the initial state $q_0$ and ends in some final state $q \in F$. The set of accepting runs on $w$ is 
+%
+\[ 
+    \mathcal{M}(w) = \left\{ (a_1, z_1, q_1) \dots (a_n, z_n, q_n) \in (\Omega \times (\Sigma \cup \{\epsilon\}) \times Q)^* \middle| 
+    \begin{array}{c}
+        \forall 0 < i \leq n ~ (q_{i-1}, a_i, z_i, q_i) \in \Delta,\\
+        a_1 \dots a_n = w, q_n \in F 
+    \end{array}\right\}~.
+\]
+%
+Notice that a transition may produce no symbol, i.e., an $\epsilon$, and that the first transition always starts in $q_0$. The language determined by $\mathcal{M}$ on input word $w \in \Omega^*$ is then defined as
+%
+\[ L_{\mathcal{M}}(w) = \{ z_1 \dots z_n \in \Sigma^* \mid \exists (a_1, z_1, q_1) \dots (a_n, z_n, q_n) \in \mathcal{M}(w) \}~. 
+\]
+%
+%Eventuell brauchen wir das gar nicht:
+%Lastly we define the language of a NMA $\mathcal{M}$ as all possible output words, i.e. the language of $\mathcal{M}$ given all input words:
+%\[ L(A) = \bigcup_{w \in \Sigma^*} L_A(w). \]
+
+\begin{enumerate}[a)]
+\item Consider the following NMA $\mathcal{M}=(Q, \Omega, \Sigma, \Delta, q_0, F)$:
+    \begin{itemize}
+        \item $Q=\{q_0, q_1, q_2, q_3\}$,
+        \item $\Omega=\{a,b,c\}$,
+        \item $\Sigma=\{\alpha, \beta, \gamma\}$,
+        \item $\Delta=\{(q_0,b,\epsilon,q_0), (q_0,c,\epsilon,q_0), (q_0,a,\epsilon,q_1), (q_1,a,\epsilon,q_1), (q_1,b,\epsilon,q_2),$\\
+                       $(q_2,a,\epsilon,q_2), (q_2,b,\epsilon,q_3), (q_2,a,\alpha,q_0), (q_2,b,\beta,q_0), (q_3,c,\gamma,q_2)\}$ and
+        \item $F=\{q_0\}$.
+    \end{itemize}
+     %
+    We can depict $\mathcal{M}$ graphically as follows:
+    \begin{center}
+    \begin{tikzpicture}
+    \tikzset{
+        ->, % makes the edges directed
+        >=latex, %other arrowhead
+        node distance=3cm, % specifies the minimum distance between two nodes. Change if necessary.
+        every state/.style={thick, fill=gray!10}, % sets the properties for each ’state’ node
+        initial text=$ $, % sets the text that appears on the start arrow
+    }
+        \node[state, initial, accepting] (0) {$q_0$};
+        \node[state, right of=0] (1) {$q_1$};
+        \node[state, right of=1] (2) {$q_2$};
+        \node[state, right of=2] (3) {$q_3$};
+        
+        \draw (0) edge[loop above] node{$b/\epsilon$, $c/\epsilon$} (0)
+              (0) edge[above] node{$a/\epsilon$} (1)
+              (1) edge[loop above] node{$a/\epsilon$} (1)
+              (1) edge[above] node{$b/\epsilon$} (2)
+              (2) edge[loop above] node{$a/\epsilon$} (2)
+              (2) edge[above, bend left] node{$b/\epsilon$} (3)
+              (3) edge[below, bend left] node{$c/\gamma$} (2)
+              (2) edge[below, bend left] node{$a/\alpha$, $b/\beta$} (0);
+    \end{tikzpicture}
+    \end{center}
+    Give $L_{\mathcal{M}}(abaaabcab)$.
+    %
+    %
+    \item  In this task, we employ NMAs to solve a modification of the extended matching problem (cf.\ Lecture~3, Slide~8): Let $n \geq 1$ and $\alpha_1,\ldots,\alpha_n \in RE_\Omega$ with $\epsilon \not\in L(\alpha_i) \ne \emptyset$ for every $i \in [n]$. Let $\Sigma = \{T_1,\ldots,T_n\}$ be an alphabet of corresponding tokens. Construct an NMA $\mathcal{M}$ such that for every $w \in \Omega^+$,
+    %
+    \begin{equation*}
+         L_{\mathcal{M}}(w) = \left\{  T_{i_1},\ldots,T_{i_k} \in \Sigma^+ ~\middle|~ \begin{aligned}(T_{i_1},\ldots,T_{i_k})~\text{is a corresponding analysis of some} \\
+         %
+         \text{decomposition}~(w_1,\ldots,w_k)~\text{of}~w~\text{w.r.t.}~\alpha_1,\ldots,\alpha_n \end{aligned} \right\}~.
+    \end{equation*}
+    %
+    Justify the correctness of your construction. \\ \\
+    %
+    \noindent
+    \emph{Hint: In this task, we do not apply the first longest match principle. Rather, we consider \emph{all} possible analyses of a word $w \in \Omega^+$.}
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\begin{enumerate}[a)]
+\item $L_{\mathcal{M}}(abaaabcab)=\{\gamma \beta, \gamma \alpha \}$
+%
+%
+\item We construct the NMA $\mathcal{M} = (Q, \Omega, \Sigma, \Delta, q_0, F)$ as follows:
+%
+\begin{enumerate}
+	\item For every $\alpha_i$, construct a DFA $\mathfrak{A}_i = (Q_i, \Omega, \delta_i, q_{0_i} F_i)$. 
+	%
+	\item Construct the product automaton $\mathfrak{A} = (Q', \Omega, \delta, q_0', F')$ w.r.t.\ $\mathfrak{A}_1, \ldots, \mathfrak{A}_n$.
+	%
+	\item Now construct $\mathcal{M}$ by
+	%
+	\begin{itemize}
+		\item $Q = Q' \cup \{q_{match}\}$
+		%
+		\item ($\Omega$ is the alphabet of the $\alpha_i$ and $\Omega =\{T_1, \ldots, T_n\}$ is the alphabet of tokens.)
+		%
+		\item the transition relation $\Delta$ is the smallest relation satisfying
+		%
+		\begin{align*} 
+		  ((q_1, \ldots, q_n), a, \epsilon, (q_1',\ldots,q_n')) \in \Delta \qquad \text{if} \qquad \delta((q_1, \ldots, q_n), a) = (q_1',\ldots,q_n')
+		  \tag{simulate $\mathfrak{A}$, thus continue searching for a matching}
+		\end{align*}
+		%
+		and
+		%
+		\begin{align*} 
+		((q_1, \ldots, q_n), a, T_i, q_{match}) \in \Delta \qquad \text{if} \qquad \delta((q_1, \ldots, q_n, a) = (q_1',\ldots,q_n')~\text{and}~q_i' \in F_i~,
+		\tag{on reaching a final state of some $\mathfrak{A}_i$, produce corresponding token $T_i$}
+		\end{align*}
+		%
+		and
+		%
+		\begin{align*} 
+		(q_{match}, a, o, q') \in \Delta \qquad \text{if} \qquad (q_0, a, o, q') \in \Delta
+		\tag{simulate restarting $\mathcal{A}$ by copying transitions of the inital state to the matching state}
+		\end{align*}
+		%
+		\item $q_0 = q_0'$ 
+		%
+		\item $F = \{q_{match}\}$.
+	\end{itemize}
+    %
+    %
+\end{enumerate}
+Our idea here is to simulate the product automaton over all tokens. As soon as a final state is reached, then can either continue searching for a match, or go back to a matching state that simulated the initial state and output a matched token. We need the nonderminism to allow the automaton to choose between continuing searching for a matching or matching the infix. We furthermore need to choose a matching token nondeterministically, since we do not have any priorities any more (in contrast to a first matching where we take the token with the highest priority).
+\end{enumerate}
+\end{solution}
+

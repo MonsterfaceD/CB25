@@ -1,0 +1,11 @@
+# Intersection = &
+# Minus = -
+#
+# Testcase 1.A
+{a} - ({a} & {b})
+a
+true
+# Testcase 1.B
+{a} - ({a} & {b})
+b
+false

@@ -1,0 +1,12 @@
+# Testcase 1
+ab+cd
+ab
+true
+# Testcase 2
+ab+cd
+cd
+true
+# Testcase 3
+ab+cd
+abd
+false

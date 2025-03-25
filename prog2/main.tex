@@ -1,0 +1,86 @@
+\documentclass[a4paper]{article}
+
+%\newcommand{\exnumber}{2}% \newif\ifsolution\solutiontrue%\newif\ifprog\progfalse'
+%\newif\ifsolution\solutiontrue
+%\newif\ifprog\progtrue
+
+
+\input{../commands}
+
+\begin{document}
+
+\header{November 9th}
+
+\section*{General Remarks}
+\begin{itemize}
+  \item Implement the methods indicated by \texttt{TODO} but do not modify the signatures of the provided methods. You are however allowed to add your own methods, data structures and classes in the code.
+  \item Please document essential parts of your code properly such that it is possible to grasp your ideas. Although the code will be graded mostly by functionality, your comments will help us to clarify whether a bug is a conceptual mistake or just a small error.
+  \item The practical part will be implemented in Java 8. You may use the standard library to solve the programming tasks. Other libraries are not allowed.
+  \item Submitted code which does not execute results in 0 points.
+  \item Your solutions to the practical programming exercise should be uploaded via Moodle as a zip file.
+  \item \textbf{Important:} Make sure that your zip file contains the ``i2Compiler'' folder, with that folder containing at least the ``src'' folder with all necessary files for compiling your code.\\Example: ``i2Compiler/src/Main.java'' should be a valid path in your archive.
+  \item If you have questions regarding the exercises and/or lecture, feel free to post in the L2P forum, write us an email at \href{mailto:cc22@i2.informatik.rwth-aachen.de}{cc22@i2.informatik.rwth-aachen.de} or visit us at our office.
+\end{itemize}
+
+\begin{exercise}{100}
+The goal of this exercise is to build our own lexer which transforms an input string into a list of symbols.
+
+\emph{Hint: as before we provide a framework which can be downloaded from Moodle.}
+
+\begin{itemize}
+  \item Implement $\texttt{lexer.BacktrackingDFA.doStep(char)}$, the method that performs a step in the product automaton of all DFAs and returns the recognized token.
+  \item Implement $\texttt{lexer.BacktrackingDFA.run(String)}$, the method that, given an input string, performs the steps of the backtracking automaton as discussed in the lecture and returns a list of symbols.
+    In case of a lexer error throw the corresponding $\texttt{lexer.LexerException}$.
+\end{itemize}
+
+Test your implementation! For example, given the following input
+
+\begin{center}
+  \begin{tabular}{c}
+    \begin{lstlisting}
+/* A random walk */
+int x = 10;
+int s = 0;
+while ( x > 0 ) {
+	int b = read() % 2; // randomness by user input
+	if (b == 1) {
+		x = x + 1;
+	} else {
+		x = x - 1;
+	}
+	s++;
+}
+write("I stopped walking after: ");
+write(s);
+write(" steps");
+    \end{lstlisting}
+  \end{tabular}
+\end{center}
+
+your implementation should generate a list of symbols like this:
+
+\begin{verbatim}
+(INT, int), (ID, x), (ASSIGN, =), (NUMBER, 10), (SEMICOLON, ;),
+(INT, int), (ID, s), (ASSIGN, =), (NUMBER, 0), (SEMICOLON, ;),
+(WHILE, while), (LPAR, (), (ID, x), (GT, >), (NUMBER, 0), (RPAR, )), (LBRACE, {),
+(INT, int), (ID, b), (ASSIGN, =), (READ, read), (LPAR, (), (RPAR, )), (MOD, %),
+    (NUMBER, 2), (SEMICOLON, ;),
+(IF, if), (LPAR, (), (ID, b), (EQ, ==), (NUMBER, 1), (RPAR, )), (LBRACE, {),
+(ID, x), (ASSIGN, =), (ID, x), (PLUS, +), (NUMBER, 1), (SEMICOLON, ;),
+(RBRACE, }), (ELSE, else), (LBRACE, {),
+(ID, x), (ASSIGN, =), (ID, x), (MINUS, -), (NUMBER, 1), (SEMICOLON, ;),
+(RBRACE, }),
+(ID, s), (INC, ++), (SEMICOLON, ;),
+(RBRACE, }),
+(WRITE, write), (LPAR, (), (STRING, "I stopped walking after: "), (RPAR, )),
+    (SEMICOLON, ;),
+(WRITE, write), (LPAR, (), (ID, s), (RPAR, )), (SEMICOLON, ;),
+(WRITE, write), (LPAR, (), (STRING, " steps"), (RPAR, )), (SEMICOLON, ;), (EOF, $)
+\end{verbatim}
+\end{exercise}
+
+\begin{solution}
+For the solution see the code in \texttt{i2CompilerSolution}.
+\end{solution}
+
+\end{document}

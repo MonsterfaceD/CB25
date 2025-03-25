@@ -1,0 +1,25 @@
+write("Hello world!");
+int hello;
+hello = 3;
+int a;
+a = 4;
+int b;
+b = a;
+b = b * hello;
+write(b + 4);
+if (a < 5) {
+    a = a / 2;
+} else {
+    a = a * 2;
+}
+while (hello > 0) {
+    hello = hello - 1;
+    a = a + 1;
+}
+if (hello < 1 && a == 5) {
+    hello = 5;
+}
+if (!(hello >= 1)) {
+    hello = 6;
+}
+write(hello);

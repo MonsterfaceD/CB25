@@ -1,0 +1,66 @@
+\begin{exercise}{??}
+Theorem~6.9 provides an alternative characterization of $LL(1)$ grammars as given in Definition~6.3. We now want to see whether Theorem~6.9 can be generalized to $LL(k)$ grammars for all $k\in \Nats$. First, recap Definition~6.3:
+
+\begin{mdframed}[linecolor=cyan, linewidth=2pt, topline=false, rightline=false, bottomline=false, skipabove=10pt, skipbelow=10pt]
+A context free grammar $G = \langle N, \Sigma, P, S \rangle$ is in $LL(k)$ if and only if for all leftmost derivations of the form
+\begin{align*}
+    S ~\Rightarrow_{l}^{*}~ wA\alpha \begin{cases}
+                                    \Rightarrow_{l} w\beta\alpha \\
+                                    \Rightarrow_{l} w\gamma\alpha
+                                  \end{cases}
+\end{align*}
+such that $\beta \neq \gamma$, it follows that $\first_k(\beta\alpha) \cap \first_k(\gamma\alpha) = \emptyset$.
+\end{mdframed}
+
+Second, we generalize Theorem 6.9 from $LL(1)$ to $LL(k)$ as follows:
+
+\begin{mdframed}[linecolor=cyan, linewidth=2pt, topline=false, rightline=false, bottomline=false, skipabove=10pt, skipbelow=10pt]
+Let $k\in \Nats$. Then $G$ is in $LL(k)$ if and only if for all pairs of rules $A \to \beta \mid \gamma \in P$ (where $\beta \neq \gamma$) we have
+\begin{align*}
+    \la_k(A \to \beta) \,\cap\, \la_k(A \to \gamma) ~=~ \emptyset~,
+\end{align*}
+where $\la_k(A \to \beta) = \first_k(\beta \cdot \follow_k(A))$
+\end{mdframed}
+
+Prove or disprove: Our modified version of Theorem~6.9 is sound for all $k\in\mathbb{N}$.
+\end{exercise}
+
+\begin{solution}
+We disprove this statement by showing that the following grammar is $LL(2)$ according to the first, but not to the second characterization:
+
+$G$ is given by the production rules:
+  \begin{align*}
+    S ~\to~ & aAab ~|~ bAbb \\
+    A ~\to~ & a ~|~ \varepsilon
+  \end{align*}
+We compute the first, follow and lookahead sets for $k=2$ of $G$:
+\begin{itemize}
+\item $\textrm{first}_2(S) = \{aa, ba, bb\}$
+\item $\textrm{first}_2(A) = \{a, \varepsilon\}$
+\item $\textrm{follow}_2(S) = \{\varepsilon\}$
+\item $\textrm{follow}_2(A) = \{ab, bb\}$\\
+\item $\la_2(S \to aAab) = \{aa\}$
+\item $\la_2(S \to bAbb) = \{ba, bb\}$
+\item $\la_2(A \to a) = \{aa, ab\}$
+\item $\la_2(A \to \varepsilon) = \{ab, bb\}$
+\end{itemize}
+Since $\la_2(A \to a) \cap \la_2(A \to \varepsilon) = \{ab\} \neq \emptyset$ the grammar $G$ is \textbf{not in} $LL(2)$ according to the second definition.\\
+\\
+Now we check all leftmost derivations as in the first definition:
+\begin{itemize}
+\item $S \to_l aAab$, $S \to_l bAbb$\\
+$\textrm{first}_2(aAab) \cap \textrm{first}_2(bAbb)
+= \{aa\} \cap \{ba, bb\} = \emptyset$ \\
+
+\item $S \to_l a\,Aab \to_l a\,aab$, $S \to_l a\,Aab \to_l a\,ab$\\
+$\textrm{first}_2(aab) \cap \textrm{first}_2(ab)
+= \{aa\} \cap \{ab\} = \emptyset$ \\
+
+\item $S \to_l b\,Abb \to_l b\,abb$, $S \to_l b\,Abb \to_l b\,bb$\\
+$\textrm{first}_2(abb) \cap \textrm{first}_2(bb)
+= \{ab\} \cap \{bb\} = \emptyset$
+\end{itemize}
+
+Thus, the grammar $G$ is \textbf{in} $LL(2)$ according to the first definition. \\
+\end{solution}
+

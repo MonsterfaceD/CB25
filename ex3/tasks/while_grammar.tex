@@ -1,0 +1,100 @@
+\begin{exercise}{30}
+%
+In this task, we define a context-free grammar to specify all valid sequences of \emph{tokens} for a simplified variant of our \emph{While} language. More formally, your task is to give $G \in \textsf{CFG}_\Sigma$ where $\Sigma$
+%
+is the alphabet of tokens given by the table at the end of this exercise and
+%
+\begin{align*}
+   L(G) = \big\{ w = T_1\ldots T_n \in \Sigma^* ~\mid~ & (T_1,\ldots,T_n)~\text{is the analysis of some syntactically correct program $c$}  \big\}~.
+\end{align*}
+%
+For simplicity, we assume that all variables and constants are of type INT, and that all comments and blanks are ignored. Furthermore, every program must end with an eof. Consider the following program as an example:
+%
+  \begin{center}
+	\begin{tabular}{c}
+		\begin{lstlisting}
+		/* test program */
+		int n = 10;
+		while ( n > 0 ) {
+		 n = n - 1;
+		}
+		eof
+		\end{lstlisting}
+	\end{tabular}
+\end{center}
+%
+The corresponding lexical analysis is given by
+%
+\begin{align*}
+    (&\text{INT}, \text{ID}, \text{ASSIGN},\text{NUMBER},\text{SEM},\text{WHILE},\text{LBRAC},\text{ID},\\
+    &\text{GT},\text{NUMBER},\text{RBRAC},\text{LCBRAC},\text{ID},\text{ASSIGN},\text{ID},\text{MINUS},\text{NUMBER},\text{SEM},\text{RCBRAC}, \text{EOF})~.
+\end{align*}
+%
+\emph{Hint: It might be a good idea to design your grammar in a modular fashion, i.e., to introduce nonterminals like program, statement, guard,... .}
+
+\newcolumntype{L}{>{\ttfamily}l}
+\begin{longtable}{Ll}
+	\hline
+	lexeme ~~~~~~~              & token  \\
+	\hline
+	int          & INT \\
+	while      & WHILE \\
+	if         & IF \\
+	else       & ELSE \\
+	
+	==         & EQ \\
+	<          & LT \\
+	>          & GT \\
+	
+	!          & NOT \\
+	\&\&       & AND \\
+	||         & OR \\
+	
+	+          & PLUS \\
+	-          & MINUS \\
+	*          & TIMES \\
+	/          & DIV\\
+	\%          & MOD \\
+	
+	;          & SEM \\
+	=          & ASSIGN \\
+	(          & LBRAC \\
+	)          & RBRAC \\
+	\{         & LCBRAC \\
+	\}         & RCBRAC\\
+	
+	0 $\mid ($- $\mid \varepsilon)\{$1$\ldots$9$\}\{$0$\ldots$9$\}^\ast$ & NUMBER \\
+	$\{$a$\ldots$zA$\ldots$Z\_$\}\{$a$\ldots$zA$\ldots$Z0$\ldots$9\_$\}^\ast$ & ID \\
+	
+	eof & EOF \\
+	
+	\hline
+\end{longtable}
+
+
+\end{exercise}
+
+
+\begin{solution}
+	%
+\begin{center}
+	\begin{tabular}{lll}
+		start       &$\to$ & program EOF\\
+		program     &$\to$ & statement program $\mid$ statement\\
+		statement   &$\to$ & declaration SEM $\mid$ assignment SEM $\mid$ branch $\mid$ loop $\mid$ out SEM\\
+		declaration &$\to$ & INT ID $\mid$ INT ID ASSIGN expr\\
+		assignment  &$\to$ & ID ASSIGN expr $\mid$ ID ASSIGN READ LBRAC RBRAC\\
+		out         &$\to$ & WRITE LBRAC expr RBRAC $\mid$ WRITE LBRAC STRING RBRAC\\
+		branch      &$\to$ & IF LBRAC guard RBRAC LCBRAC program RCBRAC $\mid$\\
+		&      & IF LBRAC guard RBRAC LCBRAC program RCBRAC\\
+		&      & ELSE LCBRAC program RCBRAC\\
+		loop        &$\to$ & WHILE LBRAC guard RBRAC LCBRAC program RCBRAC\\
+		expr        &$\to$ & NUMBER $\mid$ ID $\mid$ subexpr\\
+		subexpr     &$\to$ & expr PLUS expr $\mid$ expr MINUS expr $\mid$ expr TIMES expr $\mid$ expr DIV expr\\
+		&      & $\mid$ expr MOD expr\\
+		guard       &$\to$ & relation $\mid$ subguard $\mid$ NOT LBRAC guard RBRAC\\
+		subguard    &$\to$ & guard AND guard $\mid$ guard OR guard\\
+		relation    &$\to$ & expr LT expr $\mid$ expr LEQ expr $\mid$ expr EQ expr $\mid$ expr LT expr $\mid$ expr GT expr
+	\end{tabular}
+\end{center}
+\end{solution}

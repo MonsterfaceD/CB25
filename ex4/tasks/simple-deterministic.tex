@@ -1,0 +1,83 @@
+\begin{exercise}{??}
+In this task, we show that every $\varepsilon$-free\footnote{A grammar $G$ is $\varepsilon$-free if and only if no production rule is of the form $A \rightarrow \varepsilon$.} $LL(1)$ grammar has a so-called \emph{simple normal form}:
+\par
+We say that a grammar $G=(N,T,S,P)$ is in simple normal form if:
+\begin{itemize}
+\item All production rules in $G$ are of the form $A \rightarrow a A_1 \dots A_n \in P$ for $a\in T$, $A_i\in N$, and $n\in \mathbb{N}$, and
+\item for every pair of rules $A \rightarrow a A_1 \dots A_n ~\mid~ b A_1' \dots A_n'$ we have $a \neq b$.
+\end{itemize}
+\textbf{Remark:} Since $0\in \mathbb{N}$, the rule $A \rightarrow a$ is also valid.
+\par
+
+Procedure \textsc{SimpleTransform} transforms every $\varepsilon$-free $LL(1)$ grammar $G=(N,T,S,P)$ into its simple normal form:
+
+\begin{algorithm}
+\caption{\textsc{SimpleTransform}}
+    \tcp{Pick a rule of the form $A \rightarrow B \alpha$ from $P$ with $\alpha \in X^*$ and $B\in N$}
+    \For{$r \coloneqq A \rightarrow B \alpha \in P$}{
+        \tcp{Apply every possible rule on $B$}
+        $P \coloneqq (P \setminus \{r\}) \cup \{ A \rightarrow \gamma \alpha \mid B \rightarrow \gamma \in P \}$\;
+    }
+    \tcp{Add dummy non-terminals for all terminals}
+    $N \coloneqq N \cup \{ \Psi_a \not\in N \mid a \in T \}$\;
+    \tcp{Add transitions for dummy non-terminals}
+    $P \coloneqq \{ A \rightarrow a A_1 \dots A_n \mid A \rightarrow a x_1 \dots x_n \in P \text{ with } x_i = A_i \in N \text{ or } x_i = b \in T, A_i = \Psi_b \}$\;
+    $P \coloneqq P \cup \{ \Psi_a \rightarrow a \mid a \in T \}$\;
+    \Return{$(N,T,S,P)$}
+\end{algorithm}
+%\par \vspace{1cm}
+
+\begin{enumerate}
+\item Prove: For every grammar $G$ in simple normal form we have $G\in LL(1)$.
+%
+\item Prove: Algorithm \textsc{SimpleTransform} terminates for every $\varepsilon$-free grammar $G\in LL(1)$.
+\suspend{enumerate}
+
+Now consider an $\varepsilon$-free grammar $G=(N,T,S,P)$ with a rule $r \coloneqq A \rightarrow B \alpha \in P$ where $\alpha \in X^{*}, B \in N$. Define a new grammar $G'=(N,T,S,P')$ by $P'=(P \setminus \{r\}) \cup \{ A \rightarrow \gamma \alpha \mid B \rightarrow \gamma \in P \}$. 
+
+\resume{enumerate}
+\item Prove:  $L(G)=L(G')$.
+\item Prove: $G \in LL(1) \Rightarrow G' \in LL(1)$.
+\item Let $G'$ be the grammar resulting from running of \textsc{SimpleTransform} on an $\varepsilon$-free grammar $G\in LL(1)$. Prove that $G'$ is in simple normal form.
+\end{enumerate}
+
+\end{exercise}
+%
+%
+%
+\begin{solution}
+	%
+	\begin{enumerate}
+		%
+		\item Since every rule is of the form $A \rightarrow aA_1\ldots A_n \coloneqq \beta$ for some $n\geq 0$, we have $\textsf{fi}(\beta) = \{a\}$ and thus $\textsf{la}(A \rightarrow \beta) =\{a\}$. Now, since for every pair of rules $A \rightarrow a A_1 \dots A_n \coloneqq \beta$ and $A \rightarrow b A_1' \dots A_n' \coloneqq \gamma$ with $\beta \neq \gamma$ we have $a \neq b$, it follows that $\textsf{la}(A \rightarrow \beta) \cap \textsf{la}(A \rightarrow \gamma) = \{a\} \cap \{b\} = \emptyset$.
+		%
+		%
+		\item By contradiction. Suppose the loop does \emph{not} terminate. Since there are only finitely many rules, there must be a derivation of the form $A \rightarrow^+ A\alpha$. Hence $G$ is left recursive, which contradicts Lemma 7.6 and assumption $G \in LL(1)$.
+		%
+		%
+		\newcommand{\dg}{~{\Rightarrow_{L,G}}~}
+		\newcommand{\dgp}{~{\Rightarrow_{L,G'}}~}
+		\newcommand{\dgs}{~{\Rightarrow_{L,G}^*}~}
+		\newcommand{\dgps}{~{\Rightarrow_{L,G'}^*}~}
+		%
+		\item Let us denote the leftmost derivation relation for $G$ (resp.\ $G'$) by $\dg$ (resp.\ $\dgp$). Since $G$ und $G'$ share the same terminals and nonterminals, it suffices to show that for all $w \in  T^+$ we have
+		%
+		\begin{align*}
+		   S \dgs w \quad \text{iff} \quad S \dgps w~.
+		\end{align*}
+		%
+		\enquote{Only If}:
+		Assume $S \dgs w$ by some derivation of the form $S \dg \alpha_1 \dg \ldots \dg \alpha_n$ with $\alpha_n = w$. We transform this derivation to a derivation $S \dgp \alpha_1' \dgp \alpha_2' \dgp \ldots \dgp \alpha_n$ by replacing every $\alpha_i \dg \alpha_{i+1}$ of the form $w_i A \beta \dg w_i B \alpha \beta$ by $w_i A \beta \dg w_i \gamma \alpha \beta$. Notice that $w_i A \beta \dgp w_i \gamma \alpha \beta$ holds by construction. For all other derivations $\alpha_i \dg \alpha_{i+1}$, we let $\alpha_i = \alpha_i'$ and $\alpha_{i+1} = \alpha_{i+1}'$. \\ \\
+        %
+		%
+		\noindent
+		\enquote{If}: Apply the construction from the previous case in reverse.
+		%
+		%
+		\item Since $G$ is $\varepsilon$-free, we have $\textsf{la}(A \rightarrow B\alpha) = \textsf{fi}(B) = \textsf{fi}(\gamma)$. Hence, the given transformation preserves all lookahead sets and thus preserves the $LL(1)$ property.
+		%
+		\item Since the for-loop in \textsc{SimpleTransform} terminates and since $G$ is $\varepsilon$-free, every rule in $G'$ is of the form $A \rightarrow a\gamma$ for some $a \in T$. Moreover, the transformation following the for-loop ensures that $\gamma = A_1\ldots A_n$ with $A_i \in N \cup \{ \Psi_a \not\in N \mid a \in T \}$. From task (d) it follows that $G' \in LL(1)$, which implies that for every pair of rules $A \rightarrow a A_1 \dots A_n ~\mid~A \rightarrow b A_1' \dots A_n'$ we have $a \neq b$.
+	\end{enumerate}
+	%
+\end{solution}
+

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="7c4bfbc7-e6a6-4027-9e95-7baf7aa6df6c" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CodeStyleSettingsInfer">
+    <option name="done" value="true" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectCodeStyleSettingsMigration">
+    <option name="version" value="1" />
+  </component>
+  <component name="ProjectId" id="1kjvbIqDiUcZYvXxctZJ2Dr5LIu" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+    <option name="showMembers" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../prog5/i2CompilerSolution" />
+  </component>
+  <component name="RunManager">
+    <configuration name="Main" type="Application" factoryName="Application" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Main" />
+      <module name="i2CompilerSolution" />
+      <option name="PROGRAM_PARAMETERS" value="tests/input/while_1.txt" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="Main" />
+      <option name="PROGRAM_PARAMETERS" value="tests/input/while_1.txt" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="JarApplication">
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="7c4bfbc7-e6a6-4027-9e95-7baf7aa6df6c" name="Default Changelist" comment="" />
+      <created>1606226884312</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1606226884312</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="2338" y="258" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1606238955107">
+      <screen x="1920" y="0" width="1920" height="1200" />
+    </state>
+    <state x="2338" y="258" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.482.1920.1053/1920.0.1920.1200@1920.0.1920.1200" timestamp="1606238955107" />
+    <state x="2663" y="308" width="424" height="591" key="#com.intellij.ide.macro.MacrosDialog" timestamp="1606238906413">
+      <screen x="1920" y="0" width="1920" height="1200" />
+    </state>
+    <state x="2663" y="308" width="424" height="591" key="#com.intellij.ide.macro.MacrosDialog/0.482.1920.1053/1920.0.1920.1200@1920.0.1920.1200" timestamp="1606238906413" />
+    <state x="2612" y="392" width="525" height="423" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1606238892464">
+      <screen x="1920" y="0" width="1920" height="1200" />
+    </state>
+    <state x="2612" y="392" width="525" height="423" key="#com.intellij.ide.util.TreeClassChooserDialog/0.482.1920.1053/1920.0.1920.1200@1920.0.1920.1200" timestamp="1606238892464" />
+    <state x="2613" y="349" width="524" height="509" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1606234208981">
+      <screen x="1920" y="0" width="1920" height="1200" />
+    </state>
+    <state x="2613" y="349" width="524" height="509" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.482.1920.1053/1920.0.1920.1200@1920.0.1920.1200" timestamp="1606234208981" />
+    <state x="2613" y="349" width="524" height="509" key="#com.intellij.refactoring.typeMigration.ui.FailedConversionsDialog" timestamp="1606232372780">
+      <screen x="1920" y="0" width="1920" height="1200" />
+    </state>
+    <state x="2613" y="349" width="524" height="509" key="#com.intellij.refactoring.typeMigration.ui.FailedConversionsDialog/0.482.1920.1053/1920.0.1920.1200@1920.0.1920.1200" timestamp="1606232372780" />
+    <state x="2553" y="477" width="633" height="260" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1" timestamp="1606227474998">
+      <screen x="1920" y="0" width="1920" height="1200" />
+    </state>
+    <state x="2553" y="477" width="633" height="260" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.482.1920.1053/1920.0.1920.1200@1920.0.1920.1200" timestamp="1606227474998" />
+    <state x="2343" y="270" width="424" height="491" key="FileChooserDialogImpl" timestamp="1606296623068">
+      <screen x="1920" y="0" width="1280" height="1024" />
+    </state>
+    <state x="2343" y="270" width="424" height="491" key="FileChooserDialogImpl/0.27.1920.1053/1920.0.1280.1024@1920.0.1280.1024" timestamp="1606296623068" />
+    <state width="1874" height="399" key="GridCell.Tab.0.bottom" timestamp="1606241532002">
+      <screen x="1920" y="0" width="1920" height="1200" />
+    </state>
+    <state width="1874" height="399" key="GridCell.Tab.0.bottom/0.482.1920.1053/1920.0.1920.1200@1920.0.1920.1200" timestamp="1606241532002" />
+    <state width="1874" height="399" key="GridCell.Tab.0.center" timestamp="1606241532001">
+      <screen x="1920" y="0" width="1920" height="1200" />
+    </state>
+    <state width="1874" height="399" key="GridCell.Tab.0.center/0.482.1920.1053/1920.0.1920.1200@1920.0.1920.1200" timestamp="1606241532001" />
+    <state width="1874" height="399" key="GridCell.Tab.0.left" timestamp="1606241532001">
+      <screen x="1920" y="0" width="1920" height="1200" />
+    </state>
+    <state width="1874" height="399" key="GridCell.Tab.0.left/0.482.1920.1053/1920.0.1920.1200@1920.0.1920.1200" timestamp="1606241532001" />
+    <state width="1874" height="399" key="GridCell.Tab.0.right" timestamp="1606241532001">
+      <screen x="1920" y="0" width="1920" height="1200" />
+    </state>
+    <state width="1874" height="399" key="GridCell.Tab.0.right/0.482.1920.1053/1920.0.1920.1200@1920.0.1920.1200" timestamp="1606241532001" />
+    <state width="1874" height="399" key="GridCell.Tab.1.bottom" timestamp="1606241532002">
+      <screen x="1920" y="0" width="1920" height="1200" />
+    </state>
+    <state width="1874" height="399" key="GridCell.Tab.1.bottom/0.482.1920.1053/1920.0.1920.1200@1920.0.1920.1200" timestamp="1606241532002" />
+    <state width="1874" height="399" key="GridCell.Tab.1.center" timestamp="1606241532002">
+      <screen x="1920" y="0" width="1920" height="1200" />
+    </state>
+    <state width="1874" height="399" key="GridCell.Tab.1.center/0.482.1920.1053/1920.0.1920.1200@1920.0.1920.1200" timestamp="1606241532002" />
+    <state width="1874" height="399" key="GridCell.Tab.1.left" timestamp="1606241532002">
+      <screen x="1920" y="0" width="1920" height="1200" />
+    </state>
+    <state width="1874" height="399" key="GridCell.Tab.1.left/0.482.1920.1053/1920.0.1920.1200@1920.0.1920.1200" timestamp="1606241532002" />
+    <state width="1874" height="399" key="GridCell.Tab.1.right" timestamp="1606241532002">
+      <screen x="1920" y="0" width="1920" height="1200" />
+    </state>
+    <state width="1874" height="399" key="GridCell.Tab.1.right/0.482.1920.1053/1920.0.1920.1200@1920.0.1920.1200" timestamp="1606241532002" />
+    <state x="2421" y="312" width="908" height="583" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1606239163789">
+      <screen x="1920" y="0" width="1920" height="1200" />
+    </state>
+    <state x="2421" y="312" width="908" height="583" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.482.1920.1053/1920.0.1920.1200@1920.0.1920.1200" timestamp="1606239163789" />
+  </component>
+</project>

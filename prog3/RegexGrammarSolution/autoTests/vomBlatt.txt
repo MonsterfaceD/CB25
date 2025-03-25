@@ -1,0 +1,20 @@
+# Test 1
+c(de+ed)*
+cdeeded
+true
+# Test 2
+ab*c(de+ed)*
+acdeeded
+true
+# Test 3
+ab*c(de+ed)*
+aabbcdeeded
+false
+# Test 4
+c({d}|{e})*
+cddd
+true
+# Test 5
+c({d}-{d,e})*
+ce
+false

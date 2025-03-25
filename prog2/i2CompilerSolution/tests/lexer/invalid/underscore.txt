@@ -1,0 +1,15 @@
+/* GCD-Computation of x and y */
+int _x;
+int y;
+x = read();
+y = read();
+while ( x != y ) {
+	if (y <= x) {
+		y = y - x;
+	} else {
+		x = x - y;
+	}
+}
+// Output result
+write("GCD: ");
+write(x);

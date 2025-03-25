@@ -1,0 +1,126 @@
+\begin{exercise}{30}
+
+In this exercise we apply attribute grammars to evaluate simple arithmetic expressions.
+\begin{enumerate}[(a)]
+  \item Write an \emph{unambiguous} context-free grammar for arithmetic expressions that contains arbitrary numerical values (which you may represent by a single terminal symbol \texttt{num}), addition (\texttt{+}), multiplication (\texttt{*}), and parentheses (\texttt{(}, \texttt{)}).\\
+    \emph{Hint:} You can already incorporate the usual operator precedence (\texttt{(}, \texttt{)} > \texttt{*} > \texttt{+}) into the grammar.
+  \item Define an attribute $\textit{value}$ to compute the value of an expression.
+    That is, the value of a given expression should correspond to the value of attribute $\textit{value}$ at the root of the corresponding derivation tree.
+    Make sure to follow the operator precedence as given in (a).
+  \item Evaluate \texttt{(1+3*2)*6}.
+    To this end, first construct the corresponding derivation tree, then set up the equation system, and solve it.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\begin{enumerate}[(a)]
+  \item The unambiguous CFG $G = (N, \Sigma, P, S)$ for the arithmetic expression is given as follows:
+    \begin{itemize}
+        \item $N := \set{S, M, N}$
+        \item $\Sigma := \set{\texttt{+}, \texttt{*}, \texttt{(}, \texttt{)}, \texttt{num}}$
+        \item $P:$
+        \begin{align*}
+            S & \to S \texttt{ + } M \mid M \\
+            M & \to M \texttt{ * } N \mid N \\
+            N & \to \texttt{(} S \texttt{)} \mid \texttt{num}
+        \end{align*}
+    \end{itemize}
+
+  \item The attribute grammar for the CFG $G$ of (a) has the synthesized attribute $\set{Val}$ and is given as follows:
+    \[
+    \begin{array}{lcll}
+        S & \to & S \texttt{ + } M        & Val.0 = Val.1 + Val.3 \\
+        S & \to & M                       & Val.0 = Val.1 \\
+        M & \to & M \texttt{ * } N        & Val.0 = Val.1 \cdot Val.3 \\
+        M & \to & N                       & Val.0 = Val.1 \\
+        N & \to & \texttt{(} S \texttt{)} & Val.0 = Val.2 \\
+        N & \to & \texttt{num}            & Val.0 = Val.1
+    \end{array}
+    \]
+
+  \item The annotated parse tree for \texttt{(1+3*2)*6} is as follows:
+    \begin{center}
+    \begin{tikzpicture}
+        [node distance = 1.5cm, auto]
+        [->,>=stealth',shorten >=1pt,auto,node distance=1cm, semithick]
+        %    \tikzstyle{every state}=[circle, radius = 2pt]
+        \tikzstyle{state}=[circle,draw=black,fill=gray,minimum size=5pt,inner sep=0pt]
+
+        \node[] (0) {S: $v_0$};
+
+        \node[] (1) [below of=0] {M: $v_1$};
+
+        \node[] (3) [below of=1] {\texttt{*}};
+        \node[] (2) [left=2.5cm of 3] {M: $v_2$};
+        \node[] (4) [right=2.5cm of 3] {N: $v_{12}$};
+
+        \node[] (5) [below of=2] {N: $v_3$};
+        \node[] (6) [below of=4] {\texttt{num}: 6};
+
+        \node[] (8) [below of=5] {S: $v_4$};
+        \node[] (7) [left=2cm of 8] {\texttt{(}};
+        \node[] (9) [right=2cm of 8] {\texttt{)}};
+
+        \node[] (10) [below of=8] {\texttt{+}};
+        \node[] (11) [left=1.5cm of 10] {S: $v_5$};
+        \node[] (12) [right=1.5cm of 10] {M: $v_8$};
+
+        \node[] (13) [below of=11] {M: $v_6$};
+        \node[] (14) [below of=12] {\texttt{*}};
+        \node[] (15) [left of=14] {M: $v_9$};
+        \node[] (16) [right of=14] {N: $v_{11}$};
+
+        \node[] (17) [below of=13] {N: $v_7$};
+        \node[] (18) [below of=16] {\texttt{num}: 2};
+        \node[] (19) [below of=15] {N: $v_{10}$};
+
+        \node[] (20) [below of=17] {\texttt{num}: 1};
+        \node[] (21) [below of=19] {\texttt{num}: 3};
+
+        \path
+        (0)  edge (1)
+        (1)  edge (2)
+             edge (3)
+             edge (4)
+        (2)  edge (5)
+        (4)  edge (6)
+        (5)  edge (7)
+             edge (8)
+             edge (9)
+        (8)  edge (10)
+             edge (11)
+             edge (12)
+        (11) edge (13)
+        (12) edge (14)
+             edge (15)
+             edge (16)
+        (13) edge (17)
+        (15) edge (19)
+        (16) edge (18)
+        (17) edge (20)
+        (19) edge (21)
+        ;
+    \end{tikzpicture}
+    \end{center}
+
+The set of variables is $\set{v_0,\hdots,v_{12}}$. The equation system is defined as follows, where bold expressions on the right-hand side result from solving the system.
+\[
+\begin{array}{lcll}
+    Val.v_0    & = & Val.v_1              & = \textbf{42} \\
+    Val.v_1    & = & Val.v_2 \cdot v_{12} & = \textbf{42} \\
+    Val.v_2    & = & Val.v_3              & = \textbf{7} \\
+    Val.v_3    & = & Val.v_4              & = \textbf{7} \\
+    Val.v_4    & = & Val.v_5 + v_8        & = \textbf{7} \\
+    Val.v_5    & = & Val.v_6              & = \textbf{1} \\
+    Val.v_6    & = & Val.v_7              & = \textbf{1} \\
+    Val.v_7    & = & 1                    & = \textbf{1} \\
+    Val.v_8    & = & Val.v_9 \cdot v_{11} & = \textbf{6} \\
+    Val.v_9    & = & Val.v_{10}           & = \textbf{3} \\
+    Val.v_{10} & = & 3                    & = \textbf{3} \\
+    Val.v_{11} & = & 2                    & = \textbf{2} \\
+    Val.v_{12} & = & 6                    & = \textbf{6} \\
+\end{array}
+\]
+\end{enumerate}
+
+\end{solution}

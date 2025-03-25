@@ -1,0 +1,12 @@
+int X;
+int Y;
+int K;
+K = 6;
+X = 1;
+Y = 1;
+while (X  != K) {
+    X = X + 1;
+    Y = Y * X;
+}
+write("Factorial:");
+write(Y);

@@ -1,0 +1,8 @@
+int x;
+int y;
+if (x <= y) {
+    int z;
+	write("Hello world.");
+    z = 1;
+}
+write(x);

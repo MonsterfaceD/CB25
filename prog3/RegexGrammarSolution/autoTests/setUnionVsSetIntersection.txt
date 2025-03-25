@@ -1,0 +1,39 @@
+# Union = |
+# Intersection = &
+#
+# Testcase 1.A (Order L)
+{a} | {b} & {c}
+a
+false
+# Testcase 1.B (Order L)
+{a} | {b} & {c}
+b
+false
+# Testcase 1.C (Order L)
+{a} | {b} & {c}
+c
+false
+# Testcase 1.A (Order R)
+{c} & {b} | {a}
+a
+false
+# Testcase 1.B (Order R)
+{c} & {b} | {a}
+b
+false
+# Testcase 1.C (Order R)
+{c} & {b} | {a}
+c
+false
+# Testcase 2.A
+{a} & {a,b} | {c}
+c
+false
+# Testcase 2.B
+{a} & {a,b} | {c}
+a
+true
+# Testcase 2.C
+{a} & {a,b} | {c}
+b
+false

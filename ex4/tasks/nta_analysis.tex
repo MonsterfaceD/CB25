@@ -1,0 +1,197 @@
+\begin{exercise}{40}
+Consider the grammar $G = (N, \Sigma, P, S)$ covering regular expressions:
+
+\begin{itemize}
+	\item $N := \set{S, R, T}$
+	\item $\Sigma := \set{\texttt{+}, \texttt{.}, \texttt{*}, \texttt{(}, \texttt{)}, \texttt{a}, \texttt{b}}$
+	\item
+    $\begin{array}[t]{@{}r@{}l@{}}
+        S ~\to~ & R \\
+        R ~\to~ & R \texttt{+} R \mid R \texttt{.} R \mid R\texttt{*} \mid T \\
+        T ~\to~ & \texttt{(} R \texttt{)} \mid \texttt{a} \mid \texttt{b}
+    \end{array}$
+\end{itemize}
+
+\begin{enumerate}[(a)]
+    \item Give the complete nondeterministic top-down parsing automaton $NTA(G)$. Do not forget to give a numbering to the grammar rules.
+
+    \item Provide a run of $NTA(G)$ on the input \texttt{a+(b*)}
+
+    %\item 
+\suspend{enumerate}
+Consider the transformed grammar $G' \in LL(1)$:
+\begin{align*}
+   S ~\to~ & R \\
+   R ~\to~ & TR' \\
+   R' ~\to~ & \texttt{+} R \mid \texttt{.} R \mid \texttt{*} R' \mid \varepsilon \\
+   T ~\to~ & \texttt{(} R \texttt{)} \mid \texttt{a} \mid \texttt{b}
+\end{align*}
+%Prove that $G' \in LL(1)$.
+\resume{enumerate}
+
+    \item Specify the deterministic top-down parsing automaton $DTA(G')$.
+
+    \item
+	Provide a run of $DTA(G')$ on the input \texttt{a+(b*)}
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\[
+ \begin{array}{llcl}
+    1. & S & \to & R \\
+    2. & R & \to & R \texttt{+} R \\
+    3. & R & \to & R \texttt{.} R \\
+    4. & R & \to & R\texttt{*} \\
+    5. & R & \to & T \\
+    6. & T & \to & \texttt{(} R \texttt{)} \\
+    7. & T & \to & \texttt{a} \\
+    8. & T & \to & \texttt{b}
+ \end{array}
+\]
+
+\begin{enumerate}[(a)]
+\item The non-deterministic push down automaton $NTA(G)$:
+\begin{itemize}
+  \item Input alphabet: $\Sigma = \set{\texttt{+}, \texttt{.}, \texttt{*}, \texttt{(}, \texttt{)}, \texttt{a}, \texttt{b}}$
+  \item Pushdown alphabet: $X = \Sigma \cup N = \set{\texttt{+}, \texttt{.}, \texttt{*}, \texttt{(}, \texttt{)}, \texttt{a}, \texttt{b}} \cup \set{S, R, T}$
+  \item Output alphabet: $P=\set{1,2,3,4,5,6,7,8}$
+  \item Configurations: $\Sigma^* \times X^* \times P^*$
+  \item Initial configuration: $(w, S, \varepsilon)$ for $w \in \Sigma^*$
+  \item Final configuration: $\set{\varepsilon} \times \set{\varepsilon} \times P^*$
+  \item Transitions: for $w \in \Sigma^*, \alpha \in X^*, z \in P^*$:
+  \begin{enumerate}
+    \item $(w,S \alpha,z) \vdash (w,R \alpha,z1)$
+    \item $(w,R \alpha,z) \vdash (w,R \texttt{+} R \alpha,z2)$
+    \item $(w,R \alpha,z) \vdash (w,R \texttt{.} R \alpha,z3)$
+    \item $(w,R \alpha,z) \vdash (w,R \texttt{*} \alpha,z4)$
+    \item $(w,R \alpha,z) \vdash (w,T \alpha,z5)$
+    \item $(w,T \alpha,z) \vdash (w,\texttt{(} R \texttt{)} \alpha,z6)$
+    \item $(w,T \alpha,z) \vdash (w,\texttt{a} \alpha,z7)$
+    \item $(w,T \alpha,z) \vdash (w,\texttt{b} \alpha,z8)$
+    \item $(cw,c\alpha,z) \vdash (w,\alpha,z)$, where $c \in \Sigma = \set{\texttt{+}, \texttt{.}, \texttt{*}, \texttt{(}, \texttt{)}, \texttt{a}, \texttt{b}}$
+  \end{enumerate}
+
+%    Another possibility is to give the transitions as a transition table.\\
+%    Let $X :=\set{(R\texttt{+}R,2), (R\texttt{.}R,3), (R\texttt{*},4), (T,5)}$ and $Y := \set{(\texttt{(}R\texttt{)}, 6), (\texttt{a}, 7), (\texttt{b}, 8)}$.
+%    The transition table looks as follows.
+%    \begin{center}
+%    \begin{tabular}{c | c c c | cccccccc}
+%                   & S           & R& T& \texttt{+} & \texttt{.} & \texttt{*} & \texttt{(} & \texttt{)} & \texttt{a} & \texttt{b} & $\varepsilon$ \\
+%      \hline
+%      \texttt{+}   &\set{(R, 1)} &X &Y & pop &     &     &     &     &     &     &        \\
+%      \texttt{.}   &\set{(R, 1)} &X &Y &     & pop &     &     &     &     &     &        \\
+%      \texttt{*}   &\set{(R, 1)} &X &Y &     &     & pop &     &     &     &     &        \\
+%      \texttt{(}   &\set{(R, 1)} &X &Y &     &     &     & pop &     &     &     &        \\
+%      \texttt{)}   &\set{(R, 1)} &X &Y &     &     &     &     & pop &     &     &        \\
+%      \texttt{a}   &\set{(R, 1)} &X &Y &     &     &     &     &     & pop &     &        \\
+%      \texttt{b}   &\set{(R, 1)} &X &Y &     &     &     &     &     &     & pop &        \\
+%      $\varepsilon$&\set{(R, 1)} &X &Y &     &     &     &     &     &     &     & accept \\
+%    \end{tabular}
+%    \end{center}
+\end{itemize}
+
+\item The input word is $w := \texttt{a+(b*)}$.
+    An accepting computation is as follows:
+    \begin{align*}
+           & (&\texttt{a+(b*)},\; & S,                       &&\varepsilon) \\
+    \vdash & (&\texttt{a+(b*)},\; & R,                       &&1) \\
+    \vdash & (&\texttt{a+(b*)},\; & R \texttt{+} R,          &&12) \\
+    \vdash & (&\texttt{a+(b*)},\; & T \texttt{+} R,          &&125) \\
+    \vdash & (&\texttt{a+(b*)},\; & \texttt{a+} R,           &&1257) \\
+    \vdash & (&\texttt{+(b*)},\;  & \texttt{+} R,            &&1257) \\
+    \vdash & (&\texttt{(b*)},\;   & R,                       &&1257) \\
+    \vdash & (&\texttt{(b*)},\;   & T,                       &&12575) \\
+    \vdash & (&\texttt{(b*)},\;   & \texttt{(} R \texttt{)}, &&125756) \\
+    \vdash & (&\texttt{b*)},\;    & R \texttt{)},            &&125756) \\
+    \vdash & (&\texttt{b*)},\;    & R \texttt{*)},           &&1257564) \\
+    \vdash & (&\texttt{b*)},\;    & T \texttt{*)},           &&12575645) \\
+    \vdash & (&\texttt{b*)},\;    & \texttt{b*)},            &&125756458) \\
+    \vdash & (&\texttt{*)},\;     & \texttt{*)},             &&125756458) \\
+    \vdash & (&\texttt{)},\;      & \texttt{)},              &&125756458) \\
+    \vdash & (&\varepsilon,\;     & \varepsilon,             &&125756458)
+    \end{align*}
+
+%\item $G':=$\[
+% \begin{array}{llcl}
+%    1. & S  & \to & R \\
+%    2. & R  & \to & TR' \\
+%    3. & R' & \to & \texttt{+} R \\
+%    4. & R' & \to & \texttt{.} R \\
+%    5. & R' & \to & \texttt{*} R' \\
+%    6. & R' & \to & \varepsilon \\
+%    7. & T  & \to & \texttt{(} R \texttt{)} \\
+%    8. & T  & \to & \texttt{a} \\
+%    9. & T  & \to & \texttt{b}
+% \end{array}
+%\]
+
+%Look-ahead table for $G'$:
+%\begin{center}
+%\begin{tabular}{c | c}
+% $\pi$ & la($\pi$)\\
+%\hline
+% 1 & \set{\texttt{(}, \texttt{a}, \texttt{b}} \\
+% 2 & \set{\texttt{(}, \texttt{a}, \texttt{b}} \\
+% 3 & \set{\texttt{+}} \\
+% 4 & \set{\texttt{.}} \\
+% 5 & \set{\texttt{*}} \\
+% 6 & \set{\texttt{)}, \varepsilon} \\
+% 7 & \set{\texttt{(}} \\
+% 8 & \set{\texttt{a}} \\
+% 9 & \set{\texttt{b}}
+%\end{tabular}
+%\end{center}
+%$\rightarrow G' \in LL(1)$.
+
+\item The deterministic push down automaton $DTA(G')$:
+\begin{itemize}
+  \item Input alphabet: $\Sigma = \set{\texttt{+}, \texttt{.}, \texttt{*}, \texttt{(}, \texttt{)}, \texttt{a}, \texttt{b}}$
+  \item Pushdown alphabet: $X = \Sigma \cup N = \set{\texttt{+}, \texttt{.}, \texttt{*}, \texttt{(}, \texttt{)}, \texttt{a}, \texttt{b}} \cup \set{S, R, R', T}$
+  \item Output alphabet: $P=\set{1,2,3,4,5,6,7,8,9}$
+  \item Configurations: $\Sigma^* \times X^* \times P^*$
+  \item Initial configuration: $(w, S, \varepsilon)$ for $w \in \Sigma^*$
+  \item Final configuration: $\set{\varepsilon} \times \set{\varepsilon} \times P^*$
+  \item Transitions: transition table as follows
+\end{itemize}
+
+    \begin{center}
+    \begin{tabular}{c | c c c c | cccccccc}
+                   & S     & R       & R'                & T                         & \texttt{+} & \texttt{.} & \texttt{*} & \texttt{(} & \texttt{)} & \texttt{a} & \texttt{b} & $\varepsilon$ \\
+      \hline
+      \texttt{+}   &       &         &(\texttt{+}R, 3)   &                           & pop &     &     &     &     &     &     &        \\
+      \texttt{.}   &       &         &(\texttt{.}R, 4)   &                           &     & pop &     &     &     &     &     &        \\
+      \texttt{*}   &       &         &(\texttt{*}R', 5)  &                           &     &     & pop &     &     &     &     &        \\
+      \texttt{(}   &(R, 1) &(TR', 2) &                   &(\texttt{(}R\texttt{)}, 7) &     &     &     & pop &     &     &     &        \\
+      \texttt{)}   &      &         &($\varepsilon$, 6)  &                           &     &     &     &     & pop &     &     &        \\
+      \texttt{a}   &(R, 1) &(TR', 2) &                   &(\texttt{a}, 8)            &     &     &     &     &     & pop &     &        \\
+      \texttt{b}   &(R, 1) &(TR', 2) &                   &(\texttt{b}, 9)            &     &     &     &     &     &     & pop &        \\
+      $\varepsilon$&       &         &($\varepsilon$, 6) &                           &     &     &     &     &     &     &     & accept \\
+    \end{tabular}
+    \end{center}
+
+\item Let $w:= \texttt{a+(b*)}$.
+    The accepting computation is as follows:
+    \begin{align*}
+           & (&\texttt{a+(b*)},\; &S,                        &&\varepsilon) \\
+    \vdash & (&\texttt{a+(b*)},\; &R,                        &&1) \\
+    \vdash & (&\texttt{a+(b*)},\; &TR',                      &&12) \\
+    \vdash & (&\texttt{a+(b*)},\; &\texttt{a}R',             &&128) \\
+    \vdash & (&\texttt{+(b*)},\;  &R',                       &&128) \\
+    \vdash & (&\texttt{+(b*)},\;  &\texttt{+}R,              &&1283) \\
+    \vdash & (&\texttt{(b*)},\;   &R,                        &&1283) \\
+    \vdash & (&\texttt{(b*)},\;   &TR',                      &&12832) \\
+    \vdash & (&\texttt{(b*)},\;   &\texttt{(}R\texttt{)}R',  &&128327) \\
+    \vdash & (&\texttt{b*)},\;    &R\texttt{)}R',            &&128327) \\
+    \vdash & (&\texttt{b*)},\;    &TR'\texttt{)}R',          &&1283272) \\
+    \vdash & (&\texttt{b*)},\;    &\texttt{b}R'\texttt{)}R', &&12832729) \\
+    \vdash & (&\texttt{*)},\;     &R'\texttt{)}R',           &&12832729) \\
+    \vdash & (&\texttt{*)},\;     &\texttt{*}R'\texttt{)}R', &&128327295) \\
+    \vdash & (&\texttt{)},\;      &R'\texttt{)}R',           &&128327295) \\
+    \vdash & (&\texttt{)},\;      &\texttt{)}R',             &&1283272956) \\
+    \vdash & (&\varepsilon,\;     &R',                       &&1283272956) \\
+    \vdash & (&\varepsilon,\;     &\varepsilon,              &&12832729566)
+    \end{align*}
+\end{enumerate}
+\end{solution}
+

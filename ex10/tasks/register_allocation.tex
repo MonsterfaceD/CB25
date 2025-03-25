@@ -1,0 +1,97 @@
+\begin{exercise}{6}
+Consider the following EPL program $C$:
+\begin{lstlisting}[numbers=none]
+in/out z;
+var x, y, i, j;
+x:=5;
+y:=10;
+if z>3 then
+	x:=6;
+else 
+	y:=y+x;
+end
+i:=1;
+if z>y then
+	j:=i;
+else
+	j:=2;
+end
+z:=j 
+end.
+\end{lstlisting}
+%TODO: change z:=j to i:=j; z:=i
+
+\begin{enumerate}[(a)]
+    \item Depict the interference graph of the variables occurring in $C$.
+    %
+    \item Assume there are $k=3$ available real registers. Apply Algorithm 19.9 to obtain a colouring $c \colon R \to [3]$.
+                Is it possible to execute $C$ with $3$ real registers? Justify your answer.
+    %
+     %
+\end{enumerate}
+
+\end{exercise}
+
+\begin{solution}
+\begin{enumerate}[(a)]
+ \item Considering the definition in the lecture, you could also add the edge $\{j,z\}$ and the edge $\{j,i\}$, however, a more accurate depicition is the following graph:
+   \begin{center}
+ 	\begin{tikzpicture}
+ 	[scale=0.8, every node/.style={transform shape}, node distance = 1.5cm, auto, -,>=stealth',shorten >=1pt,auto,semithick]
+ 	%    \tikzstyle{every state}=[circle, radius = 2pt]
+ 	\tikzstyle{state}=[circle,draw=black,fill=gray,minimum size=5pt,inner sep=0pt]
+ 	
+ 	\node[] (0) {$x$};
+ 	
+ 	\node[] (1) [right of=0] {$z$};
+ 	
+ 	\node[] (2) [below of=0] {$y$};
+ 	\node[] (3) [right of=2] {$i$};
+ 	\node[] (4) [below of=3] {$j$};
+
+ 	
+ 	\path
+ 	(0) edge (1)
+	(0) edge (2)
+	(1) edge (2)
+	(2) edge (3)
+	(1) edge (3)
+	;
+ 	\end{tikzpicture}
+ 	\end{center}
+ 	%
+ 	\item We first depict the stack $S$ at the beginning of each iteration of the loop in the simplification phase:
+ 	%
+ 	\begin{enumerate}
+ 		\item $\epsilon$
+ 		%
+ 		\item $(j)$
+ 		%
+ 		\item $(j,i)$
+ 		%
+ 		\item $(j,i,z)$
+ 		%
+ 		\item $(j,i,z,x)$
+ 		%
+ 		\item $(j,i,z,x,y)$
+ 	\end{enumerate}
+    %
+    Next, we depict the current colouring at the beginning of an iteration of the second loop:
+    %
+    \begin{enumerate}
+       \item $ c = \emptyset$
+       %
+       \item $c= \{y:1\}$
+       %
+       \item $c= \{y:1, x:2\}$
+       %
+       \item $c= \{y:1, x:2, z:3\}$
+       %
+       \item $c= \{y:1, x:2, z:3, i:2\}$
+       %
+       \item $c= \{y:1, x:2, z:3, i:2, j:1\}$
+    \end{enumerate}
+    %
+    Since we have a $3$-colouring, it is indeed possible to execute $C$ with $3$ real registers.
+\end{enumerate}
+\end{solution}

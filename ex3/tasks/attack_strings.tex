@@ -1,0 +1,114 @@
+%%%%%%%%%%%%%
+% Dot not use this exercise anymore please! It only has problems...
+%%%%%%%%%%%%%
+
+\begin{exercise}{40}
+%\textit{Note: This exercise has been changed slightly in the solution in order to accommodate remarks from the exercise class.}\par
+        On July 20, 2016 the popular website \href{https://stackoverflow.com}{stackoverflow.com} experienced an unexpected outage due to a malformed post
+that caused its backtracking Regex engine to consume extraordinary high CPU time.\footnote{Details are provided at \url{http://stackstatus.net/post/147710624694/outage-postmortem-july-20-2016}}
+This is an example of a \emph{regular expression denial-of-service} (ReDoS) attack:
+An attacker tries to paralyze an application by feeding it with input strings that exhibit high computational complexity.\par
+
+In this exercise, we have a closer look at "attack strings" for the word problem of an NFA $\mathfrak{A}$ (\enquote{given $w$, is $w \in L(\mathfrak{A})$?}) without $\epsilon$-transitions. We assume that our algorithm for solving the word problem  is very naive and explores each possible run of an NFA on a word $w$ individually.
+%for a given sequence of NFAs $\mathfrak{A}_1, \ldots, \mathfrak{A_n}$ over the alphabet $\Omega$ instead of regular expressions $\alpha_1, \ldots, \alpha_n \in \textit{RE}_{\Omega}$. 
+
+We call an NFA $\mathfrak{A}$ \emph{vulnerable} if and only if the worst-case complexity of this naive algorithm is exponential in the length of the input word $w$.
+
+\begin{enumerate}[(a)]
+  \item Provide an example of a vulnerable NFA $\mathfrak{A}$ and, for each $k \geq 1$, an input string $w_n$ of length $|w_n| = n \geq k$ such that the runtime of the naive algorithm on $w_n$ is exponential in $n$.
+
+  \item A \emph{path} in an NFA $\mathfrak{A} = (Q,\Omega,\delta,q_0,F)$ is a sequence of transitions $\pi = (q_1,\ell_1,q_2)\ldots(q_{m-1},\ell_{m-1},q_m)$ such that $q_i \in Q$, $\ell_i \in \Omega$, and $q_{i+1} \in \delta(q_i,\ell_i)$. Moreover, we set $\textit{labels}(\pi) = \ell_1 \ldots \ell_{m-1}$.
+
+    Show that an NFA $\mathfrak{A}$ is vulnerable if there exists a state $q$ and two distinct paths $\pi_1$, $\pi_2$ such that
+            \begin{enumerate}[(i)]
+              \item both $\pi_1$ and $\pi_2$ start and end at state $q$,
+              \item $\textit{labels}(\pi_1) = \textit{labels}(\pi_2)$,
+              \item there is a path $\pi_p$ from initial state $q_0$ to $q$, and
+              \item there is a path $\pi_s$ from $q$ to a state $q_r \notin F$.
+            \end{enumerate}
+  \item Sketch a procedure that takes an NFA $\mathfrak{A}$ and one of its states $q$ as an input and checks whether $\mathfrak{A}$ is vulnerable using the criterium from \textbf{(b)} for the given state $q$.
+  \end{enumerate}
+\end{exercise}
+
+
+\begin{solution}
+\begin{enumerate}[(a)]
+    \item Let $\Omega = \{a,b\}$. For each $k \geq 1$, we choose the input string $w_n = a \cdot a^{2k} \cdot b$ with length $|w_n| = 2k+2 \geq k$, and the following NFA:
+
+    \begin{center}
+          \begin{tikzpicture}[->,shorten >=1pt,auto,thick,node distance=2.5cm]
+            \tikzstyle{every state}=[draw=black,text=black, minimum width = .7cm]
+
+            \node[state, initial, initial text=] (0) at (0,0) {0};
+            \node[state, accepting] (1) at (2,0) {1};
+            \node[state] (2) at (4,0) {2};
+
+            \path[every node/.style={font=\sffamily\small}]
+              (0) edge node[above] {$a$} (1)
+              (0) edge[bend right]  node[below left] {$b$} (2)
+              (1) edge node[above] {$b$} (2)
+              (1) edge[bend right] node[above] {$a$} (0)
+              (1) edge[loop above] node[above] {$a$} (1)
+            ;
+          \end{tikzpicture}
+        \end{center}
+
+    The NFA is vulnerable.
+    From state $1$ and input $aa$ two possible paths $1 \overset{a}{\rightarrow} 0 \overset{a}{\rightarrow} 1$ and $1 \overset{a}{\rightarrow} 1 \overset{a}{\rightarrow} 1$ are possible.
+    That means for input $(aa)^k$ there are $2^k$ possible paths which must be considered in the worst-case.
+    As the input $w_n$ is not accepted (because of suffix $b$) we have to consider all $2^k$ many paths.
+
+    \item Consider a string of the form $w_p \cdot w^k \cdot w_s$, where $w_p = \textit{labels}(\pi_p)$, $w = \textit{labels}(\pi_1) = \textit{labels}(\pi_2)$, $w_s = \textit{labels}(\pi_s)$, and $k \geq 1$.
+
+    We show for each $k \geq 1$ that there are at least $2^{k}$ possible runs of $\mathfrak{A}$ on $w_p \cdot w^{k}$ that end up in $q$. By induction on $k$.
+
+    \textbf{Induction base.} For $k=1$, we know from (iii) that $\pi_p$ leads to $q$.
+    By (i) this means that $\pi_p \cdot \pi_1$ and $\pi_p \cdot \pi_2$ lead to $q$.
+    Moreover, by (ii), we have $\textit{labels}(\pi_p \cdot \pi_1) = \textit{labels}(\pi_p \cdot \pi_2) = w_p \cdot w$.
+    Hence, there are at least two runs of $\mathfrak{A}$ on $w_p \cdot w$ that end up in $q$.
+
+    \textbf{Induction hypothesis.}
+    Assume for an arbitrary, but fixed $k \geq 1$ that there are at least $2^{k}$ possible runs of $\mathfrak{A}$ on $w_p \cdot w^{k}$ that end up in $q$.
+
+    \textbf{Induction step.}
+    Consider the word $w_p \cdot w^{k+1}$.
+    By I.H. there are at least $2^{k}$ possible runs of $\mathfrak{A}$ on $w_p \cdot w^{k}$ that end up in $q$.
+    Since $\textit{labels}(\pi_1) = \textit{labels}(\pi_2) = w$ (by (ii)), we know from (i) that for each of these runs $\pi$
+    there are two runs of $\mathfrak{A}$ on $w_p \cdot w^{k+1}$ that end up in $q$.
+    More precisely, these runs are $\pi \cdot \pi_1$ and $\pi \cdot \pi_2$.
+    Hence there are at least $2 \cdot 2^{k} = 2^{k+1}$ runs of $\mathfrak{A}$ on $w_p \cdot w^{k+1}$ that end up in $q$.
+
+    Now, by (iv) we know that there are at least $2^{k}$ runs of $\mathfrak{A}$ on $w_p \cdot w^{k} \cdot w_s$ that are \emph{rejected} by $\mathfrak{A}$.
+    Hence, in the worst case, the naive algorithm has to consider each of these $2^{k}$ possible runs.
+    In other words, the runtime of the naive algorithm is exponential in the input string.
+
+    \textbf{Remark:}
+    In the case of our FLM analysis these four conditions are not sufficent. We also need a fifth condition
+    \begin{enumerate}[(v)]
+        \item $q \in P$.
+    \end{enumerate}
+    This condition ensures that state $q$ is productive. Otherwise the Backtracking NFA could abort early on for unproductive states as it will never reach an accepting state again.
+
+    \item Assume that $\mathfrak{A} = (Q,\Omega,\delta,q_0,F)$ and $q \in Q$.
+    We construct a new NFA $\mathfrak{A}_{\text{evil}}$ that accepts all possible attack strings for state $q$.
+    If the language of $\mathfrak{A}_{\text{evil}}$ is non-empty then $\mathfrak{A}$ is vulnerable for $q$.
+    Our construction works as follows:
+
+
+    \begin{align*}
+      & \mathfrak{A}_{\text{evil}} ~=~ \texttt{empty NFA} \\
+      & \texttt{for}~ q_1,q_2 \in \delta(q,\ell) ~\texttt{and}~ q_1 \neq q_2~\texttt{do} \\
+      & \qquad \mathfrak{A}_1 ~=~ \mathfrak{A}_{\texttt{loop}}(q,\ell,q_1) \\
+      & \qquad \mathfrak{A}_2 ~=~ \mathfrak{A}_{\texttt{loop}}(q,\ell,q_2) \\
+      & \qquad \mathfrak{A}_p ~=~ (Q,\Omega,\delta,q_0,\{q\}) \\
+      & \qquad \mathfrak{A}_s ~=~ (Q,\Omega,\delta,q,F) \\
+      & \qquad \mathfrak{A}_{\text{evil}} ~=~ \mathfrak{A}_{\text{evil}} ~\cup~ \left( \mathfrak{A}_p \cdot (\mathfrak{A}_1 \cap \mathfrak{A}_2)^{+} \cdot \overline{\mathfrak{A}_s} \right) \\
+      & \texttt{return}~\mathfrak{A}_{\text{evil}}
+    \end{align*}
+    In this construction, the automaton $\mathfrak{A}_{\texttt{loop}}(q,\ell,q_i)$, $i \in \{1,2\}$, is given by
+    \[ (Q \cup \{q'\}, \Omega, \delta \cup \{(q',\ell,q_i)\}, q', \{q\})~, \]
+    where $q'$ is a fresh state.
+\end{enumerate}
+
+\end{solution}
+

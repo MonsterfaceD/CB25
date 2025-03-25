@@ -1,0 +1,90 @@
+\documentclass[a4paper]{article}
+
+\input{../commands}
+
+\begin{document}
+
+\header{December 9th}
+
+\section*{General Remarks}
+The aim of this exercise sheet is to make you familiar with the ANTLR (\url{http://www.antlr.org}) parser builder library. It is a widespread library to write parsers for a range of programming languages.
+Please consider the following remarks regarding implementation assignments:
+\begin{itemize}
+  \item Implement the methods indicated by \texttt{TODO} but do not modify the signatures of the provided methods. You are however allowed to add your own methods, data structures and classes in the code.
+  \item Please document essential parts of your code properly such that it is possible to grasp your ideas. Although the code will be graded mostly by functionality, your comments will help us to clarify whether a bug is a conceptual mistake or just a small error.
+  \item The ANTLR exercise will be implemented in Java 8 \textbf{and ANTLR 4.7.1}. You may use the standard library \textbf{(but not java.util.regex}) to solve the programming tasks. Other libraries are not allowed.
+  \item Submitted code which does not execute results in 0 points. Therefore make sure you submit everything that you have used to run your code.
+  \item Your solutions to the practical programming exercise should be uploaded via Moodle as a zip file.
+  \item \textbf{Important:} Make sure that your zip file contains the ``RegexGrammar'' folder, with that folder containing at least the ``src'' and ``lib'' folders with all necessary files for compiling your code.\\Example: ``/RegexGrammar/src/RegexGrammarRunner.java'' should be a valid path in your archive.
+  \item There are several possible solutions, and this is a way to get to know ANTLR. %\textbf{Feel free to discuss in the L2P forum.} There, we also post a couple of resources.
+%  \item \textbf{Important:} Make sure that your zip file contains the ``i2Compiler'' folder, with that folder containing at least the ``src'' folder with all necessary files for compiling your code.\\Example: ``i2Compiler/src/Main.java'' should be a valid path in your archive.
+\end{itemize}
+
+
+\begin{exercise}{20}
+	You are asked to build a parser for regular expressions extended by sets of symbols. In this exercise sheet, you have to design a parser for basic regular expressions, consisting of alternatives ($+$), concatenation (two words written together) and the Kleene star ($*$). An $\varepsilon$ is denoted by the underscore \_.
+	We assume Latin non-capital characters (a--z) as alphabet.
+	Furthermore, you can write concrete sets in the expressions: $\{ a, b, c \}$ which means $a + b + c$. On sets, we allow set union ($\mid$), set intersection ($\&$) and set minus ($-$).
+
+	The following is a list of example regex with a word which is either in or not in the language.
+
+    \begin{center}
+        \begin{tabular}{l|l|c}
+         Regex & word & member \\
+          \hline
+         $c(de+ed)^*$ & $cdeeded$ & \texttt{true} \\
+         $ab^{*}c(de+ed)^*$ & $acdeeded$ & \texttt{true} \\
+         $ab^{*}c(de+ed)^*$ & $aabbcdeeded$ & \texttt{false} \\
+         $c(\{d\}|\{e\})^*$ & $cddd$ & \texttt{true} \\
+         $c(\{d\} - \{d,e\})^*$ & $ce$ & \texttt{false}
+        \end{tabular}
+    \end{center}
+
+	The input for this table and more can be found in the file \texttt{RegexGrammar/tests/test.txt}.
+	
+	The operator precedence should be $*~\succ \text{ concationation } \succ ~+~ \succ ~\mid~ \succ ~\&~  \succ ~- $, where $*$ binds strongest.
+
+	Your task is to write a tool which \textbf{decides membership automatically}. We prepared a main method and an automata class for NFA. Parts which need implementation are marked with \texttt{TODO}.
+
+	In particular, we suggest to:
+	\begin{itemize}
+	\item Install the \emph{antlr4ide} (\url{https://github.com/antlr4ide/antlr4ide}) for Eclipse, and follow the instructions to create a project for ANTLR 4 in Eclipse, if you want to use an IDE. Otherwise, see the supplied \texttt{compile.\{sh,bat\}} scripts for compiling by hand. When not using the IDE, do \textit{not} forget to recompile your grammar after changing it!
+	\item If you use Eclipse you can import the provided sources as a project into Eclipse. Afterwards, you have to set the correct path to \texttt{antlr-4.7.1-complete.jar} in the project \texttt{Properties > ANTLR 4 > Tool}.
+	\item Design a parser, and realise a print-function for the abstract syntax tree. This helps debugging, and you will get to know ANTLR.
+        You can implement the print function in the \texttt{getAutomaton()} method of class \texttt{RegexGrammarRunner}.
+        You can create additional files and classes if necessary.
+	\item Write a regex-to-NFA method in the \texttt{getAutomaton()} method of class \texttt{RegexGrammarRunner}.
+        Again, you can create additional files and classes if necessary.
+	\item Implement the \texttt{accept()} method in the class \texttt{Automaton}.
+    \item Test your implementation. You can either run the program from Eclipse or from the commandline. For compiling, see the scripts \texttt{compile.sh} (Linux) and \texttt{compile.bat} (Windows, needs path to your \texttt{javac.exe}, see top of file).\\ Execute with:
+       \begin{lstlisting}[numbers=none,basicstyle=\ttfamily]
+$ java -cp build/classes:lib/antlr-4.7.1-complete.jar RegexGrammarRunner
+       \end{lstlisting}
+       If no argument is given the regex must be given on the commandline. End the regex with a linebreak and press Ctrl+D to end the input:
+       \begin{lstlisting}[numbers=none,basicstyle=\ttfamily]
+Input regex:
+ab*
+(CTRL+D)
+       \end{lstlisting}
+       Then the corresponding automaton is constructed and printed.
+
+       You can also provide a list of regex/word pairs and check for the membership:
+       \begin{lstlisting}[numbers=none,basicstyle=\ttfamily]
+$ java ... RegexGrammarRunner "a*" "aa" "b*" "ab"
+'aa' is a member of 'a*'? true
+'ab' is a member of 'b*'? false
+       \end{lstlisting}
+       The third option is to provide a file as argument containing a list of regex/word pairs:
+       \begin{lstlisting}[numbers=none,basicstyle=\ttfamily]
+$ java ... RegexGrammarRunner tests/test.txt
+'cdeeded' is a member of 'c(de+ed)*'? true
+'acdeeded' is a member of 'ab*c(de+ed)*'? true
+...
+       \end{lstlisting}
+	\end{itemize}
+\end{exercise}
+
+\begin{solution}
+    For the solution see the code in \texttt{RegexGrammarSolution}.
+\end{solution}
+\end{document}

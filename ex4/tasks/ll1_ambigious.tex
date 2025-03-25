@@ -1,0 +1,17 @@
+\begin{exercise}{10}
+    Prove or disprove: If $G \in LL(1)$, then $G$ is unambigious.
+\end{exercise}
+
+\begin{solution}
+    The claim is true. Assume for a contradiction that $G \in LL(1)$ and $G$ is ambigious. Since $G$ is ambigious, there is a word $w' \in L(G)$ and two leftmost derivations of the form 
+    %
+    \[S \lTo^\ast w A \alpha \left\{
+    \begin{array}{@{}*{4}{c@{~}}}
+    	\lTo & w \beta \alpha  & \lTo^\ast & wx\\
+    	\lTo & w \gamma \alpha & \lTo^\ast & wy
+    \end{array}\right.
+    \]
+    %
+    with $\beta \neq \gamma$ and $wx = wy = w'$. However, since $G \in LL(1)$, it follows from $\beta \neq \gamma$ that $\first_1(x) \neq \first_1(y)$ and therefore $wx \neq wy$, which is a contradiction.
+    %
+\end{solution}

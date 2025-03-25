@@ -1,0 +1,96 @@
+\begin{exercise}{30}
+Consider the context-free grammar $G = (N, \Sigma, P, S')$ given by:
+\begin{itemize}
+	\item $N \coloneqq \set{S', S, A_1, A_2}$
+	\item $\Sigma \coloneqq \set{a_1, a_2, b_1, b_2}$
+	\item $P:$
+	\begin{align*}
+		&S'   \to S \\
+		%&S    \to A_i b_i          & & \text{for } 1 \le i \le 2 \\
+		&S    \to A_1 b_1 ~|~ A_2 b_2  \\
+		%&A_i  \to a_j A_i \mid a_j & & \text{for } 1 \le i, j \le 2 \text{ and } i \ne j \\
+		%
+		&A_1  \to a_2 A_1 \mid a_2 \\
+		&A_2  \to a_1 A_2 \mid a_1
+	\end{align*}
+\end{itemize}
+\begin{enumerate}[(a)]
+\item Calculate all $LR(1)$ sets of $G$.
+\item Does $G$ have any $LR(1)$ conflicts? Justify your answer.
+\item Compute the $LR(1)$ action and goto function for $G$.
+\item Parse the word $a_2 a_2 a_2 b_1$ using the $LR(1)$ parser for $G$.
+\item Parse the word $a_2 a_2 a_2 b_1 b_2$ using the $LR(1)$ parser for $G$.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+The grammar $G$ looks as follows:
+\[
+\begin{array}{rll}
+    S'  & \to S & (0) \\
+    S   & \to A_1 b_1 \mid A_2 b_2 & (1,2)\\
+    A_1 & \to a_2 A_1 \mid a_2 & (3,4)\\
+    A_2 & \to a_1 A_2 \mid a_1 & (5,6)
+\end{array}
+\]
+\begin{enumerate}[(a)]
+\item The $LR(1)$ sets are as follows:
+    \begin{align*}
+        I_0 \coloneqq LR(1)(\varepsilon) ~:~ & [ S' \to \cdot S, \varepsilon] ~ [ A_1 \to \cdot a_2, b_1] ~ [ A_2 \to \cdot a_1, b_2] ~\\
+                                             & [ S \to \cdot A_1 b_1, \varepsilon] ~ [ S \to \cdot A_2 b_2 , \varepsilon] ~\\
+                                             & [ A_1 \to \cdot a_2 A_1, b_1] ~ [ A_2 \to \cdot a_1 A_2, b_2] \\
+        I_1 \coloneqq LR(1)(S) ~:~ & [ S' \to S \cdot, \varepsilon]\\
+        I_2 \coloneqq LR(1)(A_1) ~:~ & [ S \to A_1 \cdot b_1 , \varepsilon]\\
+        I_3 \coloneqq LR(1)(A_2) ~:~ & [ S \to A_2 \cdot b_2 , \varepsilon]\\
+        I_4 \coloneqq LR(1)(a_1) ~:~ & [ A_2 \to \cdot a_1, b_2] ~ [ A_2 \to a_1 \cdot, b_2] ~ [ A_2 \to a_1 \cdot A_2, b_2] ~ [ A_2 \to \cdot a_1 A_2, b_2]\\
+        I_5 \coloneqq LR(1)(a_2) ~:~ & [ A_1 \to \cdot a_2, b_1] ~ [ A_1 \to a_2 \cdot, b_1] ~ [ A_1 \to a_2 \cdot A_1, b_1] ~ [ A_1 \to \cdot a_2 A_1, b_1]\\
+        I_6 \coloneqq LR(1)(A_1 b_1) ~:~ & [ S \to A_1 b_1 \cdot, \varepsilon]\\
+        I_7 \coloneqq LR(1)(A_2 b_2) ~:~ & [ S \to A_2 b_2 \cdot, \varepsilon]\\
+        I_8 \coloneqq LR(1)(a_1 A_2) ~:~ & [ A_2 \to a_1 A_2 \cdot, b_2]\\
+        I_9 \coloneqq LR(1)(a_2 A_1) ~:~ & [ A_1 \to a_2 A_1 \cdot, b_1]\\
+        I_{10} \coloneqq LR(1)(\gamma) ~:~ & \emptyset
+    \end{align*}
+    
+\item There are no shift/reduce and reduce/reduce conflicts. It may look like there are still shift/reduce conflicts in $I_4$ and $I_5$, but since for shift items we use the symbol next to the dot as lookahead and no shift item has a $b_i$ right to the dot, there is indeed no shift/reduce conflict.
+
+\item We encode the action and goto function as the following parsing table (empty entries are errors):
+    \begin{center}
+    \begin{tabular}{c | c c c c c | c c c c c c c }
+      LR(1)(G) & \multicolumn{5}{c|}{act}                       & \multicolumn{7}{c}{goto}\\
+               & $a_1$ & $a_2$ & $b_1$ & $b_2$ & $\varepsilon$ & $S$   & $A_1$ & $A_2$ & $a_1$ & $a_2$ & $b_1$ & $b_2$\\
+      \hline
+      $I_0$    & shift & shift &       &       &               & $I_1$ & $I_2$ & $I_3$ & $I_4$ & $I_5$ &\\
+      $I_1$    &       &       &       &       &\texttt{accept}& \\
+      $I_2$    &       &       & shift &       &               &       &       &       &       &       & $I_6$ &\\
+      $I_3$    &       &       &       & shift &               &       &       &       &       &       &       & $I_7$\\
+      $I_4$    & shift &       &       & red 6 &               &       &       & $I_8$ & $I_4$ &\\
+      $I_5$    &       & shift & red 4 &       &               &       & $I_9$ &       &       & $I_5$ &\\
+      $I_6$    &       &       &       &       & red 1         &\\
+      $I_7$    &       &       &       &       & red 2         &\\
+      $I_8$    &       &       &       & red 5 &               &\\
+      $I_9$    &       &       & red 3 &       &               &\\
+      $I_{10}$ & \multicolumn{5}{c|}{------------------\hspace{1ex}\texttt{error}\hspace{1ex}------------------} & \\
+    \end{tabular}
+    \end{center}
+\item The only (and accepting) run on the input $a_2 a_2 a_2 b_1$ is as follows:
+    \begin{align*}
+             &(& a_2 a_2 a_2 b_1, & ~~ I_0, &&\varepsilon &)\\
+      \vdash &(& a_2 a_2 b_1, & ~~ I_0 I_5, &&\varepsilon &)\\
+      \vdash &(& a_2 b_1, & ~~ I_0 I_5 I_5, &&\varepsilon &)\\
+      \vdash &(& b_1, & ~~ I_0 I_5 I_5 I_5, &&\varepsilon &)\\
+      \vdash &(& b_1, & ~~ I_0 I_5 I_5 I_9, &&4 &)\\
+      \vdash &(& b_1, & ~~ I_0 I_5 I_9, &&43 &)\\
+      \vdash &(& b_1, & ~~ I_0 I_2, &&433 &)\\
+      \vdash &(& \varepsilon, & ~~ I_0 I_2 I_6, &&433 &)\\
+      \vdash &(& \varepsilon, & ~~ I_0 I_1, &&4331 &)\\
+      \vdash &(& \varepsilon, & ~~ \varepsilon, &&43310 &)\\
+    \end{align*}
+\item The only (and non-accepting) run on the input $a_2 a_2 a_2 b_1 b_2$ is as follows:
+    \begin{align*}
+             &(& a_2 a_2 a_2 b_1 b_2, & ~~ I_0, &&\varepsilon &)\\
+             &&& \textit{(see subtask (d))} &&&\\ 
+      \vdash^{*} &(& b_2, & ~~ I_0 I_2 I_6, &&433 &)\\
+      \vdash && \texttt{error} &&&&\\
+    \end{align*}
+\end{enumerate}
+\end{solution}

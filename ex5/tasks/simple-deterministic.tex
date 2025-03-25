@@ -1,0 +1,107 @@
+\begin{exercise}{60}
+In this task, we show that every $\varepsilon$-free\footnote{A grammar $G$ is $\varepsilon$-free if and only if no production rule is of the form $A \rightarrow \varepsilon$.} $LL(1)$ grammar has a so-called \emph{simple normal form}.
+\par
+We say that a grammar $G=(N,\Sigma,S,P)$ is in simple normal form if:
+\begin{itemize}
+\item All production rules in $G$ are of the form $A \rightarrow a A_1 \dots A_n \in P$ for $a\in \Sigma$, $A_i\in N$, and $n\in \mathbb{N}$, and
+\item for every pair of distinct rules $A \rightarrow a A_1 \dots A_n ~\mid~ b A_1' \dots A_n'$ we have $a \neq b$.
+\end{itemize}
+\textbf{Remark:} Since $0\in \mathbb{N}$, the rule $A \rightarrow a$ is also valid.
+\par
+
+Procedure \textsc{SimpleTransform} transforms every $\varepsilon$-free $LL(1)$ grammar $G=(N,\Sigma,S,P)$ into simple normal form:
+
+\begin{algorithm}
+\caption{\textsc{SimpleTransform}. We assume a procedure \textsc{reduce} $(N,\Sigma,S,P)$ that returns a reduced version of the grammar $(N,\Sigma,S,P)$.}
+
+    \tcp{Pick a rule of the form $A \rightarrow B \alpha$ from $P$ with $\alpha \in X^*$ and $B\in N$}
+    \For{$r \coloneqq A \rightarrow B \alpha \in P$}{
+        \tcp{Apply every possible rule to $B$}
+        $P \coloneqq (P \setminus \{r\}) \cup \{ A \rightarrow \gamma \alpha \mid B \rightarrow \gamma \in P \}$\;
+    }
+    \tcp{Add dummy non-terminals for all terminals}
+    $N \coloneqq N \cup \{ \Psi_a \not\in N \mid a \in \Sigma \}$\;
+    \tcp{Add productions for dummy non-terminals}
+    $P \coloneqq \{ A \rightarrow a A_1 \dots A_n \mid A \rightarrow a x_1 \dots x_n \in P \text{ with } x_i = A_i \in N \text{ or } x_i = b \in \Sigma, A_i = \Psi_b \}$\;
+    $P \coloneqq P \cup \{ \Psi_a \rightarrow a \mid a \in \Sigma \}$\;
+    $\textnormal{result} \coloneqq $ \textsc{reduce} $(N,\Sigma,S,P)$ \;
+	%Reduce $(N,T,S,P)$ to $G$\;
+    \Return{$\textnormal{result}$}\;
+\end{algorithm}
+%\par \vspace{1cm}
+
+\begin{enumerate}
+\item Prove: For every grammar $G$ in simple normal form we have $G\in LL(1)$.
+%
+\item Prove: Algorithm \textsc{SimpleTransform} terminates for every $\varepsilon$-free grammar $G\in LL(1)$.
+\suspend{enumerate}
+
+Now consider an $\varepsilon$-free grammar $G=(N,\Sigma,S,P)$ with a rule $r \coloneqq A \rightarrow B \alpha \in P$ where $\alpha \in X^{*}, B \in N$. Define a new grammar $G'=(N,\Sigma,S,P')$ by $P'=(P \setminus \{r\}) \cup \{ A \rightarrow \gamma \alpha \mid B \rightarrow \gamma \in P \}$. 
+
+\resume{enumerate}
+\item Prove:  $L(G)=L(G')$.
+\item Prove: $G \in LL(1) \Rightarrow G' \in LL(1)$.
+\item Let $G'$ be the grammar resulting from running of \textsc{SimpleTransform} on an $\varepsilon$-free grammar $G\in LL(1)$. Prove that $G'$ is in simple normal form.
+\end{enumerate}
+
+\end{exercise}
+%
+%
+%
+\begin{solution}
+	%
+	\begin{enumerate}
+		%
+		\item Since every rule is of the form $A \rightarrow aA_1\ldots A_n \coloneqq \beta$ for some $n\geq 0$, we have $\textsf{fi}(\beta) = \{a\}$ and thus $\textsf{la}(A \rightarrow \beta) =\{a\}$. Now, since for every pair of rules $A \rightarrow a A_1 \dots A_n \coloneqq \beta$ and $A \rightarrow b A_1' \dots A_n' \coloneqq \gamma$ with $\beta \neq \gamma$ we have $a \neq b$, it follows that $\textsf{la}(A \rightarrow \beta) \cap \textsf{la}(A \rightarrow \gamma) = \{a\} \cap \{b\} = \emptyset$.
+		%
+		%
+		\item By contradiction. Suppose the loop does \emph{not} terminate. Since there are only finitely many rules, there must be a derivation of the form $A \Rightarrow^+ A\alpha$. Hence $G$ is left recursive, which contradicts Lemma~7.7 and thus assumption $G \in LL(1)$.
+		%
+		%
+		\newcommand{\dg}{~{\Rightarrow_{G}}~}
+		\newcommand{\dgp}{~{\Rightarrow_{G'}}~}
+		\newcommand{\dgs}{~{\Rightarrow_{G}^*}~}
+		\newcommand{\dgps}{~{\Rightarrow_{G'}^*}~}
+		%
+		\item Let us denote the leftmost derivation relation for $G$ (resp.\ $G'$) by $\dg$ (resp.\ $\dgp$). It suffices to show that for all $w \in  \Sigma^+$ we have
+		%
+		\begin{align*}
+		   S \dgs w \quad \text{iff} \quad S \dgps w~.
+		\end{align*}
+		%
+		\enquote{Only If}:
+		Assume $S \dgs w$ by some derivation of the form $S \dg \beta_1 \dg \ldots \dg \beta_n$ with $\beta_n = w$. From this derivation, we obtain a derivation $S \dgp \beta_1' \dgp \beta_2' \dgp \ldots \dgp \beta'_{m}$ with $\beta'_m = w$ in $G'$ by replacing every $\beta_{i} \dg \beta_{i+1} \dg \beta_{i+2}$ of the form $w_i A \delta \dg w_i B \alpha \delta \dg w_i \gamma \alpha \delta $ by $w_i A \delta \dgp w_i \gamma \alpha \delta$. Notice that $w_i A \delta \dgp w_i \gamma \alpha \delta$ holds by construction. \\ \\%For all other derivations $\alpha_i \dg \alpha_{i+1}$, we let $\alpha_i = \alpha_i'$ and $\alpha_{i+1} = \alpha_{i+1}'$. Since we possibly  combine several two derivations into one, the new derivation may be smaller. \\ \\
+        %
+		%
+		\noindent
+		\enquote{If}: Assume $S \dgps w$ by some derivation of the form $S \dgp \beta'_1 \dgp \ldots \dgp \beta'_m$ with $\beta_m = w$. We show that there is a derivation of the form $S \dg \beta_1 \dg \ldots \dg \beta_n$. Let $\beta'_i \dgp \beta'_{i+1}$ be any such step in the derivation. If they do not have the form $\beta'_i = w_i A \delta \dgp w_i \zeta \delta = \delta_{i+1}$, the derivation step is already present in $G$, since we only removed derivations with $A$ on the left side. If furthermore $\zeta \neq \gamma \alpha$ with $B \rightarrow \gamma$, the derivation is also already present in $G$, since we only removed a production rule where $\alpha$ is generated at the end. Thus we assume such a form. Then we can transform this derivation into the new derivation $w_i A \delta \dg w_i B \alpha \delta \dg w_i \gamma \alpha \delta$, which is derivable in $G$ by construction. \\ 
+		%
+		%
+		\item We now denote $\textsf{fi}_G( \cdot )$ and $\textsf{la}_G(\cdot)$ the respective functions on the grammar $G$. Furthermore note that due to $G$ and $G'$ beeing $\varepsilon$-free, we have $\textsf{la}_G(\alpha) = \textsf{fi}_G( \alpha )$ and $\textsf{la}_{G'}(\alpha) = \textsf{fi}_{G'}( \alpha )$. We need to show that $\textsf{la}_{G'}(A \rightarrow \beta) \cap \textsf{la}_{G'}(A \rightarrow \beta') = \emptyset$. For every other non-terminal this is trivial, since their production rules remain unchanged.  \\
+		%
+		If $A \rightarrow \beta, A \rightarrow \beta' \in P$ (but $\beta, \beta' \neq B\alpha$), we have $\textsf{la}_{G'}(A \rightarrow \beta) \cap \textsf{la}_{G'}(A \rightarrow \beta') = \emptyset$ since $G \in LL(1)$. \\
+		%
+		If $A \rightarrow \beta \in \{ A \rightarrow \gamma \alpha \mid B \rightarrow \gamma \in P \}$ and $A \rightarrow \beta' \in P$ (but $\beta' \neq B\alpha$), we have $\textsf{fi}_{G}(\gamma) \subseteq \textsf{fi}_{G}(B)$ by construction. $\textsf{fi}_{G}(\gamma)=\textsf{fi}_{G'}(\gamma)$ holds if $\gamma$ cannot be derived to $A\zeta$, since $G$ and $G'$ differ only by a production rule with $A$ on the left side. However, $\gamma$ cannot be derived to $A\zeta$, else we have indirect left-recursion and thus $G \not\in LL(1)$. Furthermore $\textsf{la}_G(A \rightarrow B \alpha) \cap \textsf{la}_G(A \rightarrow \beta') = \emptyset$, since $G \in LL(1)$. Together we have that 
+		\begin{align*}
+			&\; \textsf{la}_{G'}(A \rightarrow \gamma \alpha) \cap \textsf{la}_{G'}(A \rightarrow \beta') \\
+		=	&\; \textsf{la}_{G'}(A \rightarrow \gamma \alpha) \cap \textsf{la}_{G}(A \rightarrow \beta') \\
+		=	&\; \textsf{fi}_{G'}(\gamma) \cap \textsf{la}_{G}(A \rightarrow \beta') \\
+		=	&\; \textsf{fi}_{G}(\gamma) \cap  \textsf{la}_{G}(A \rightarrow \beta') \\
+		\subseteq	&\; \textsf{fi}_{G}(B) \cap  \textsf{la}_{G}(A \rightarrow \beta') \\
+		=	&\: \textsf{la}_{G}(A \rightarrow B \alpha) \cap  \textsf{la}_{G}(A \rightarrow \beta') \\
+		= 	&\; \emptyset.
+		\end{align*}
+		%
+		Lastly, if $A \rightarrow \beta, A \rightarrow \beta' \in \{ A \rightarrow \gamma \alpha \mid B \rightarrow \gamma \in P \}$, we have that $\beta = \gamma \alpha$ and $\beta' = \gamma' \alpha$ with $B \rightarrow \gamma, B \rightarrow \gamma' \in P$. Since $G \in LL(1)$ we have $\textsf{la}_{G}(B \rightarrow \gamma ) \cap \textsf{la}_{G}(B \rightarrow \gamma') = \textsf{fi}_G(\gamma) \cap \textsf{fi}_G(\gamma') = \emptyset$. Since neither $\gamma$ nor $\gamma'$ can be derived to $A\zeta$ (else we have indirect left-recursion), we have that $\textsf{fi}_G(\gamma) = \textsf{fi}_{G'}(\gamma)$ and $\textsf{fi}_G(\gamma') = \textsf{fi}_{G'}(\gamma')$. Together we have 
+		\begin{align*}
+			&\; \textsf{la}_{G'}(A \rightarrow \gamma \alpha) \cap \textsf{la}_{G'}(A \rightarrow \gamma' \alpha) \\
+		=   &\; \textsf{fi}_{G'}(\gamma) \cap \textsf{fi}_{G'}(\gamma') \\ 
+		=   &\; \textsf{fi}_{G}(\gamma) \cap \textsf{fi}_{G}(\gamma') \\
+		=	&\; \emptyset.
+		\end{align*}
+		%
+		\item Since the for-loop in \textsc{SimpleTransform} terminates and since $G$ is $\varepsilon$-free, every rule in $G'$ is of the form $A \rightarrow a\gamma$ for some $a \in \Sigma$. Moreover, the transformation following the for-loop ensures that $\gamma = A_1\ldots A_n$ with $A_i \in N \cup \{ \Psi_a \not\in N \mid a \in \Sigma \}$. From task (d) it follows that $G' \in LL(1)$, which implies that for every pair of rules $A \rightarrow a A_1 \dots A_n ~\mid~A \rightarrow b A_1' \dots A_n'$ we have $a \neq b$.
+	\end{enumerate}
+	%
+\end{solution}
+

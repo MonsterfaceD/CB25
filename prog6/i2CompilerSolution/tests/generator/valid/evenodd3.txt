@@ -1,0 +1,17 @@
+int x;
+x = 13;
+if (x % 2 == 0) {
+    write("even");
+} else {
+    write("odd");
+}
+int i;
+i = x;
+while (i > 0) {
+    i = i-2;
+}
+if (i == 0) {
+    write("even");
+} else {
+    write("odd");
+}

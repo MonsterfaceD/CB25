@@ -1,0 +1,79 @@
+\documentclass[a4paper]{article}
+
+\input{../commands}
+
+\begin{document}
+
+\header{October 26th}
+
+\section*{General Remarks}
+This course will be accompanied by a series of practical assignments with the goal to build our own compiler \icompiler{} for the language \textit{WHILE}.
+The \textit{WHILE} language captures (integer) variable declarations, assignments, arithmetic operations, conditional branches, loops, basic I/O (read and write) and Java-style comments.
+Please consider the following remarks regarding implementation assignments:
+\begin{itemize}
+  \item Programming exercises will be accompanied by a small framework including predefined classes and method declarations. Your task usually is to implement these methods. Please do not modify the signatures of the provided methods.
+  \item Please document essential parts of your code properly such that it is possible to grasp your ideas. Although the code will be graded mostly by functionality, your comments will help us to clarify whether a bug is a conceptual mistake or just a small error.
+  \item The practical part will be implemented in Java 8. You may use the standard library to solve the programming tasks. Other libraries are not allowed.
+  \item Your solutions to the practical programming exercise should be uploaded via Moodle as a zip file.
+  \item Please hand in your solutions in \emph{groups of four} and hand in only one solution per group. You can use the forum in this Moodle room to find group members.
+  \item Exercises are \emph{optional}, i.e., not required for admission to exams. However, corrections to students’ solutions are provided as annotations to the submissions.
+  \item If you have questions regarding the exercises and/or lecture, feel free to write us an email at:
+  \[\text{   \href{mailto:cc22@i2.informatik.rwth-aachen.de}{cc22@i2.informatik.rwth-aachen.de}}\]
+\end{itemize}
+
+\begin{exercise}{100}
+   In this exercise we make the first steps towards building a lexer. The task of a lexer is to read an input string and return a sequence of symbols. For now, we start by building deterministic finite automata that recognise particular tokens.
+
+   We provide you with a framework which contains the essential class definitions and method declarations for this task. The easiest way to work with that framework is to simply import the files as an existing project into Eclipse. Parts which need implementation are marked with \texttt{TODO}.
+   \begin{enumerate}
+    \item[(a)] Implement the class \texttt{AbstractDFA.java} in package \texttt{lexer} representing an arbitrary DFA with its states and transitions. You may use \texttt{Pair.java} in the \texttt{util} package.
+    \item[(b)] Implement the class \texttt{WordDFA.java} in package \texttt{lexer.dfa} which is instantiated with a string. This class should represent a DFA that recognises exactly the given string.
+    \item[(c)] Implement the class \texttt{CommentDFA.java} in package \texttt{lexer.dfa} that recognises single-line and multi-line comments.
+   \end{enumerate}
+   For testing, you find several small examples in the \texttt{test} directory. You can compile the program with
+   \begin{lstlisting}[numbers=none,basicstyle=\ttfamily]
+      $javac -d bin -sourcepath src src/Main.java
+   \end{lstlisting}
+   and then run the examples with
+   \begin{lstlisting}[numbers=none,basicstyle=\ttfamily]
+      $java -cp bin Main tests/test1.txt
+   \end{lstlisting}
+
+   The results on the examples should be:
+
+   \begin{lstlisting}[basicstyle=\ttfamily,numbers=none]
+$java -cp bin Main tests/test1.txt
+input: while
+WHILE: true
+COMMENT: false
+   \end{lstlisting}
+   \begin{lstlisting}[basicstyle=\ttfamily,numbers=none]
+$java -cp bin Main tests/test2.txt
+input: While
+WHILE: false
+COMMENT: false
+   \end{lstlisting}
+   \begin{lstlisting}[basicstyle=\ttfamily,numbers=none]
+$java -cp bin Main tests/test3.txt
+input: /**while*/
+WHILE: false
+COMMENT: true
+   \end{lstlisting}
+   \begin{lstlisting}[basicstyle=\ttfamily,numbers=none]
+$java -cp bin Main tests/test4.txt
+input: /* */*/
+WHILE: false
+COMMENT: false
+   \end{lstlisting}
+   \begin{lstlisting}[basicstyle=\ttfamily,numbers=none]
+$java -cp bin Main tests/test5.txt
+input: //foo
+WHILE: false
+COMMENT: true
+   \end{lstlisting}
+\end{exercise}
+
+\begin{solution}
+For the solution see the code in \texttt{i2CompilerSolution}.
+\end{solution}
+\end{document}

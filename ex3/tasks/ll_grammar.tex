@@ -1,0 +1,81 @@
+\begin{exercise}{??}
+Consider the following grammar $G$:
+    \begin{align*}
+        S ~\to~ & c S \mid A a \\
+        A ~\to~ & a A c \mid B c \\
+        B ~\to~ & b D \\
+        C ~\to~ & a C a \mid \epsilon \\
+        D ~\to~ & a D \mid c
+    \end{align*}
+
+\begin{enumerate}[(a)]
+    \item Reduce the grammar $G$ to the grammar $G'$.
+    \item Compute the first ($\first$) sets for all nonterminal symbols in $G'$.
+    \item Compute the follow ($\follow$) sets for all nonterminal symbols in $G'$.
+    \item Does $G' \in LL(1)$ hold? Justify your answer.
+    \item Could we prove or disprove $G \in LL(1)$ using Theorem 6.9 without the reduce step? What can you conclude about the validitity of Lemma 6.11 with respect to potentially non-reduced, context-free grammars?
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\begin{enumerate}
+\item $C$ is not reachable, thus we remove $C$ and receive the reduced grammar $G'$:
+    \begin{align*}
+        S ~\to~ & c S \mid A a \\
+        A ~\to~ & a A c \mid B c \\
+        B ~\to~ & b D \\
+        D ~\to~ & a D \mid c
+    \end{align*}
+\item The first sets are as follows:
+    \begin{align*}
+        \first(S) &= \set{a, b, c} \\
+        \first(A) &= \set{a, b} \\
+        \first(B) &= \set{b} \\
+        \first(D) &= \set{a, c}
+    \end{align*}
+
+\item The follow sets are as follows:
+\begin{align*}
+    \fo(S) &= \set{\varepsilon} \\
+    \fo(A) &= \set{a,c} \\
+    \fo(B) &= \set{c} \\
+    \fo(D) &= \set{c} \\
+\end{align*}
+
+\item $G' \in LL(1)$ does hold.
+    We compute all $\la$ sets:
+    \begin{align*}
+        \la(S \rightarrow c S ) &= \{ c \}\\
+        \la(S \rightarrow A a ) &= \{ a, b \}\\
+        \cline{1-2}
+        \la(A \rightarrow a A c ) &= \{ a \}\\
+        \la(A \rightarrow B c ) &= \{ b \}\\
+        \cline{1-2}
+        \la(B \rightarrow b D ) &= \{ b \}\\
+        \cline{1-2}
+        \la(D \rightarrow a D ) &= \{ a \}\\
+        \la(D \rightarrow c ) &= \{ c \}\\
+    \end{align*}
+    Since the $\la$ sets are disjoint for every non-terminal symbol, we have $G' \in LL(1)$.
+
+\item We can still use Theorem 6.9: We calculate the $\first$, $\fo$ and $\la$ sets for $C$:
+    \begin{align*}
+        \first(C) &= \{ a, \epsilon \}\\
+        \fo(C) &= \emptyset\\
+        \cline{1-2}
+        \la(C \rightarrow a C a) &= \{ a \}\\
+        \la(C \rightarrow \epsilon) &= \emptyset
+    \end{align*}
+    Since $\la(C \rightarrow a C a) \cap \la(C \rightarrow \epsilon) = \emptyset$ we can still conclude that the grammar is $LL(1)$.\\
+    However, if we use Lemma 6.11, we get the following calculation:
+        \begin{align*}
+        \first(C) &= \{ a, \epsilon \}\\
+        \fo(C) &= \{ a \}\\
+        \cline{1-2}
+        \la(C \rightarrow a C a) &= \{ a \}\\
+        \la(C \rightarrow \epsilon) &= \{ a \}
+    \end{align*}
+    Now we have $\la(C \rightarrow a C a) \cap \la(C \rightarrow \epsilon) = \{ a \}$, which would mean that $G$ is \textbf{not} in $LL(1)$, thus it is really required to reduce $G$ for the algorithm.
+\end{enumerate}
+\end{solution}
+

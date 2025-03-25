@@ -1,0 +1,7 @@
+write(" s ");
+write(" ");
+write("   ");
+write("s s ");
+write(" s s");
+write(" s s ");
+write("Done.");

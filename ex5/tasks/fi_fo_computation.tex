@@ -1,0 +1,33 @@
+\begin{exercise}{20}
+Recall that we assume every context-free grammar $G$ to be \emph{reduced} (cf.\ Definition 5.12). In this task, we investigate why this assumption is crucial for Lemma 7.1, i.e., for systematically \mbox{computing lookahead sets.}
+%
+\begin{enumerate}
+	\item Provide a \emph{non}-reduced context-free grammar $G$ such that the computation of $\fir$ by means of Lemma 7.1 is \emph{incorrect}.
+	%
+	\item Provide a \emph{non}-reduced context-free grammar $G$ such that the computation of $\fo$ by means of Lemma 7.1 is \emph{incorrect}.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+
+\begin{enumerate}
+	\item Consider the CFG given by
+	%
+	\[
+	    S \rightarrow a S~.
+	\]
+	%
+	since $S$ is not productive, we have $\fir(S) = \emptyset$ by definition. However, Lemma 7.1.2 yields $a \in \fir(aS)$. Hence Lemma 7.1.1 implies that $a \in \fir(S)$, which is a contradiction.
+	%
+	\item Consider the CFG given by
+	%
+	\begin{align*}
+	  S &\rightarrow a \\
+	  %
+	  A & \rightarrow Aa~.
+	\end{align*}
+    %
+    Since $A$ is unreachable, we have $\fo(A) = \emptyset$ by definition. However, since $a \in \fir(a)$ by Lemma 7.1.1, we have $a \in \fo(A)$ by Lemma 7.1.3, which is a contradiction.
+\end{enumerate}
+
+\end{solution}

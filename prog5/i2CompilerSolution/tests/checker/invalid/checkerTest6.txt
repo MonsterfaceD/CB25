@@ -1,0 +1,4 @@
+while (z == 0) {
+    int z;
+    write(z);
+}

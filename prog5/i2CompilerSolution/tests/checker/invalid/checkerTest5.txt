@@ -1,0 +1,13 @@
+if (1 <= 0) {
+    int hallo;
+    if (hallo == 1) {
+        int y;
+        while (hallo > 0) {
+            int x;
+            y = x;
+        }
+    } else {
+        int z;
+        z = y;
+    }
+}

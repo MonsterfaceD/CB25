@@ -1,0 +1,37 @@
+\begin{exercise}{20}
+    In this exercise we consider \emph{right-to-left} ($RR$) parsing. More precisely we want to construct a parser that reads a given word $w$ from right-to-left and generates a \emph{rightmost} derivation (if it exists). We denote the set of all grammars for which a deterministic $RR$ parser with a \emph{lookahead of $1$} exists by $RR(1)$.
+
+    \begin{enumerate}[a)]
+        \item Define the set $RR(1)$ formally.
+        
+        \emph{Hint:} You may want to adapt either Definition~6.6 (of $LL(k)$ grammars) or Definition~9.1 (of $LR(k)$ grammars).
+        \item Given a grammar $G \in RR(1)$, sketch a \emph{deterministic} parser for $G$.
+    \end{enumerate}
+\end{exercise}
+
+\begin{solution}
+    \begin{enumerate}[a)]
+        \item We adapt Definition~6.6 as follows:
+        \begin{mydef}[last set]
+            Let $G=\langle N,\Sigma, P, S\rangle \in CFG_{\Sigma}$, and $\beta \in X^*$. Then the $\textsf{last}_1$ set of $\beta$, $\textsf{last}_1(\beta) \subseteq \Sigma^{\leq 1}$, is given by
+            \[ \textsf{last}_1(\alpha) := \{ a \in \Sigma \mid \text{ex.}~w \in \Sigma^* ~\text{such that}~ \beta \Rightarrow^* wa\} \cup \{ \varepsilon \mid \beta \Rightarrow^* \varepsilon \}. \]
+        \end{mydef}
+
+        \begin{mydef}[RR(1)]\label{def:rr1}
+            Let $G=\langle N,\Sigma, P, S\rangle \in CFG_{\Sigma}$. Then $G$ is an $RR(1)$ grammar if for all rightmost derivations of the form
+            \[ S \Rightarrow_r^* \alpha A w \begin{cases}
+                \Rightarrow_r \alpha \beta w \Rightarrow_r^* xw \\
+                \Rightarrow_r \alpha \gamma w \Rightarrow_r^* yw
+            \end{cases}\]
+            such that $\beta \neq \gamma$, it follows that $\textsf{last}_1(x) \neq \textsf{last}_1(y)$.           
+        \end{mydef}
+
+        \item We reduce $RR(1)$ parsing to $LL(1)$ parsing. Afterwards you can use the known parsing techniques for $LL(1)$.
+        
+        Let $w \in \Sigma^*$ and $G = \langle N,\Sigma, P, S\rangle \in RR(1)$. We transform $w$ into $w^M$ by mirroring $w$ and $G$ into $G^M$ by mirroring the right-hand side of every production. We claim now that $G^M \in LL(1)$ and that the leftmost analysis of an $LL(1)$ parser for $G^M$ on $w^M$ is also a rightmost analysis for $G$ on $w$.
+        
+        %Firstly, for $\alpha \Rightarrow^* \beta$ in $G$, we have $\alpha^M \Rightarrow^* \beta^M$ in $G^M$ (provable by induction on the length of the derivation).
+        We have  $\alpha^M \Rightarrow_l^z \beta^M$ in $G^M$ iff $\alpha \Rightarrow_r^z \beta$  in $G$ ( by induction on the length of the derivation). Moreover, we have $\first_1(\alpha ^M) = \textsf{last}_1(\alpha)$.
+        Together, we directly can prove $G^M \in LL(1)$ from Definition \ref{def:rr1} together with the observations above. Moreover, the second observation immediately also proves that the analysis of a mirrored leftmost derivation coincides with the analysis of a rightmost derivation. 
+    \end{enumerate}
+\end{solution}

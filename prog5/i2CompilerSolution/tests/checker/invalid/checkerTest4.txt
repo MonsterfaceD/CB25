@@ -1,0 +1,6 @@
+int x;
+if (x <= 2) {
+	int z;
+} else {
+    z = x;
+}

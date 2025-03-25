@@ -1,0 +1,20 @@
+int x;
+x = 13;
+int y;
+y = x / 2;
+y = y * 2;
+if (y == x) {
+    write("even");
+} else {
+    write("odd");
+}
+int i;
+i = x;
+while (i > 0) {
+    i = i-2;
+}
+if (i == 0) {
+    write("even");
+} else {
+    write("odd");
+}

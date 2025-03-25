@@ -1,0 +1,7 @@
+int test;
+if (0 <= test) {
+	int z;
+    z = 1;
+} else {
+    z = test;
+}

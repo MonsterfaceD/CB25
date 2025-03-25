@@ -1,0 +1,48 @@
+\begin{exercise}{30}
+  Consider the following intermediate code:
+  \begin{center}
+  \begin{tabular}{rll}
+       & \vdots \\
+    2: & LIT(-1);\\
+    3: & LOAD(1, 3); & (dif, off) \\
+    4: & LT; \\
+    5: & JFALSE(7); \\
+    6:& CALL(6, 1, 3); & (ca, dif, loc) \\
+    7:& RET; \\
+  \end{tabular}
+  \end{center}
+
+  Give the next four states of the abstract machine starting in:
+  \begin{center}
+    $(ca, d, p) := (3, 7:-1, 6:5:42:6:6:6:7:6:30:1:2:-3:4:9:3:\ldots)$
+  \end{center}
+
+  Recall that the procedure stack has the form:
+  \begin{center}
+    $\begin{array}{|c|c|c|c|c|c||c|}
+      \hline
+      sl&dl&ra&v_1&\qquad\ldots\qquad&v_n&\ldots
+      \\\hline
+    \end{array}$
+  \end{center}
+  and the $\textit{base}$-function is defined as:
+  \begin{center}
+    $\begin{array}{rcl}
+      \textit{base}(p, 0) &:=& 1 \\
+      \textit{base}(p, \textit{dif}+1) &:=& \textit{base}(p, \textit{dif}) + p.\textit{base}(p, \textit{dif})\\
+    \end{array}$
+  \end{center}
+\end{exercise}
+
+\begin{solution}
+  \[
+    \begin{array}{lclcl}
+      3:& \llbracket LOAD(1,3);	\rrbracket & (3,7:-1,p) & \to & (4,7:-1:(p.12),p)\\
+      4:& \llbracket LT; 	\rrbracket & (4,7:-1:-3,p) & \to & (5,7:0,p)\\
+      5:& \llbracket JFALSE(7);	 \rrbracket & (5,7:0,p) & \to & (7,7,p)\\
+      7:& \llbracket RET; \rrbracket & (7,7,p) &\to & (42,7,7:6:30:1:2:-3:4:9:3...) \\
+    \end{array}
+  \]
+\end{solution}
+
+

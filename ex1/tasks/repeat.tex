@@ -1,0 +1,39 @@
+\begin{exercise}{10+10+15+15}
+    \begin{enumerate}
+        \item Describe the language $L((01)^+(10)^+)$ in words. 
+        \item Construct a regular expression over the alphabet $\Sigma=\{0,1\}$ for the set of all strings with exactly three $0$'s,
+        \item Construct a regular expression over the alphabet $\Sigma=\{0,1\}$ for the set of all strings with equal number of $0$'s and $1$'s such that no prefix has two more $0$'s than $1$'s nor two more $1$'s than $0$'s.
+        \item Show that there exists a language $L$ such that $L=\{0 w \ |\ w\in L\} \cup \{ 1 \}$ and $L$ is regular.
+    \end{enumerate}
+\end{exercise}
+
+\begin{solution}
+    \begin{enumerate}
+        \item The set of all strings consisting of $0$'s and $1$'s starting and ending with $0$ and containing exactly one consecutive $1$'s but no consecutive $0$'s.
+        \item The regular expression is: 
+          \[1^*01^*01^*01^*\]
+        \item The regular expression is:
+            \[(01 | 10)^*\]
+        \item Guess the solution to be  $0^*1$ (because it feels right).
+            \begin{align*}
+                L = \{0 w \ |\ w\in L(0^*1)\} \cup \{ 1 \}
+            \end{align*}
+            By substituting $L$ with $L(0^*1)$ in the equation above, we have:
+            \begin{align*}
+                L(0^*1) = \{0 w \ |\ w\in L(0^*1)\} \cup \{ 1 \}
+            \end{align*}
+            We now prove the equivalence of both sets. That is, we assume $w \in L(0^*1)$ and show that $0w$ or $1$ is in $L$ and that $w$ can be decomposed into either $1$ or $0w'$ such that $w'$ is in $L(0^*1)$.
+
+            For the first direction we have:
+            \begin{itemize}
+                \item $1 \in L(0^01) \subseteq L(0^*1)$,
+                \item For $w \in L(0^*1)$ we assume that $w=0^n1$. Then we have $0w = 0^{n+1}1$ and thus also $0w \in L(0^{n+1}1) \subseteq L(0^*1)$.
+            \end{itemize}
+
+            For the other direction we have: $w \in L(0^n1) \subseteq L(0^*1)$ for some $n$. We prove now that $w$ can be decomposed into either $1$ or $0w'$ such that $w' \in L(0^*1)$ by case distinction on $n$.
+            \begin{itemize}
+                \item For $n=0$ we have that $w=1$ and thus $w$ can be decomposed into $1$,
+                \item For $n>0$ we have that $w=0^n1$ and thus $w=0w'$ with $w'=0^{n-1}1$. Remark that $w'$ is well defined because $n>0$. Finally, $w' \in L(0^{n-1}1) \subseteq L(0^*1)$.
+            \end{itemize}
+    \end{enumerate}
+\end{solution}

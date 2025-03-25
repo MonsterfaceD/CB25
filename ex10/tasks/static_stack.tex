@@ -1,0 +1,174 @@
+\begin{exercise}{40}
+  In this task, we extend our intermediate language EPL by another \emph{static} stack data structure
+  (in addition to those given in Definition~17.4). 
+  A static stack $S$ has a fixed (i.e., determined at compile time) puffer length $z$ and stores elements of type $I$. 
+  It is declared as follows:
+  %
+  %
+  \begin{center}
+    \texttt{stack(z) of $I$}
+  \end{center}
+  Furthermore, a static Stack $S$ provides the four methods
+  \begin{center}
+  \begin{tabular}{ll}
+    push:    & \texttt{$S+$}\\
+    pop:     & \texttt{$S-$}\\
+    isEmpty: & \texttt{$S?-$}\\
+    isFull:  & \texttt{$S?+$}~,
+  \end{tabular}
+  \end{center}
+  where $S+$ must occur on the left-hand side on an assignment only. $S-$, $S?-$ and $S?+$ must occur on the right-hand side on an assignment and in boolean expressions for if-statements and while-statements only. We assume for simplicity that if $S+$ is on the left hand side of the assignment, then $S-$ can not occur on the right hand side of this assignment.
+  \begin{enumerate}[(a)]
+    \item Extend the symbol table functions $update$ and $vtype$ accordingly.
+    \item Extend the translation for variables function $vt$ for $S+$ and $S-$ and $et$ for $S?+$ and $S?-$ accordingly.
+    \item Generate the AM code for the following EPL program:
+      \begin{center}
+        \texttt{type IntStack = stack(5) of int; var t: int, S: IntStack; S+ := 1; t := S- + 1;}
+      \end{center}
+      That is, compute $\mathrm{trans}(...)$ of the above program.
+      %
+      \item Describe how we can realize \emph{jumping code} for Boolean expressions in our extended EPL. In particular, provide the $sbt$ functions for $S?-$ and  $S?+$.
+  \end{enumerate}
+\end{exercise}
+
+\begin{solution}
+  \begin{enumerate}[(a)]
+    \item
+    
+    update(type I := \texttt{stack(z) of $J$}; $D_T'$, $st$) := \\
+    \hspace*{5em} update(type $D_T'$, $st[I \mapsto (type,stack,J,z,(z\cdot m)+1)]$)\\
+    if $st(J)=(type, \dots, m)$\\
+    
+    \begin{tabular}{lcl}
+        vtype($S-$, st)  & := & $J$ \\
+                         &    & if $vtype($S$,st)=I, st(I)=(type,stack,J,z,n)$\\
+        vtype($S+$, st)  & := & $J$ \\
+                         &    & if $vtype($S$,st)=I, st(I)=(type,stack,J,z,n)$\\
+        vtype($S?-$, st) & := & bool \\
+        vtype($S?+$, st) & := & bool \\
+    \end{tabular}
+    
+    \item We assume for this solution that at the start of the program the memory locations are initialized with $0$, i.e. $\sigma(i)=0$.
+    We first define a helper function $ls$ that loads the non-relative stack pointer address:\\
+    \begin{tabular}{lcll}
+        ls($S$, st, a) & := & vt($S$, st, a)  & \% base address \\
+                       &    & vt($S$, st, a') & \% pointer address \\
+                       &    & LOAD;           & \% load pointer \\
+                       &    & CAB(1,z)        & \% check pointer range \\
+                       &    & LIT(m); MULT;   & \% relative address \\
+                       &    & ADD;            & \% address for $S+$ \\
+    \end{tabular}\\
+    if $vtype($S$,st) = I, st(I) = (type,stack,J,z,n), st(J) = (type, \dots, m)$
+    
+    Now we use $ls$ to define $vt$:\\
+    \begin{tabular}{lcll}
+        vt($S+$, st, a) & := & vt($S$, st, a)   & \% pointer address \\
+                        &    & vt($S$, st, a')  & \% pointer address \\
+                        &    & LOAD;            & \% load pointer \\
+                        &    & LIT(1); ADD;     & \% increment pointer \\
+                        &    & STORE;           & \% store back again \\
+                        &    & ls($S$, st, a'') & \% compute stack pointer address \\
+    \end{tabular}\\
+    
+    \begin{tabular}{lcll}
+        vt($S-$, st, a) & := & ls($S$, st, a)   & \% compute stack pointer address \\
+                        &    & vt($S$, st, a')  & \% pointer address \\
+                        &    & vt($S$, st, a'') & \% pointer address \\
+                        &    & LOAD;            & \% load pointer \\
+                        &    & LIT(1); SUB;     & \% decrement pointer \\
+                        &    & STORE;           & \% store back again \\
+    \end{tabular}\\
+    
+    \begin{tabular}{lcll}
+        et($S?+$, st, a) & := & vt($S$, st, a) & \% pointer address \\
+                         &    & LOAD;          & \% load pointer \\
+                         &    & LIT(z);        & \% load max size \\
+                         &    & GEQ;           & \% is pointer greater or equal than z? \\
+    \end{tabular}\\
+    if $vtype($S$,st) = I, st(I) = (type,stack,J,z,n)$\\
+    
+    \begin{tabular}{lcll}
+        et($S?-$, st, a) & := & a: LIT(0);      & \% load min size \\
+                         &    & vt($S$, st, a') & \% pointer address \\
+                         &    & LOAD;           & \% load pointer \\
+                         &    & GEQ;            & \% is 0 greater or equal than pointer? \\
+    \end{tabular}
+
+
+
+
+    \item The computed program is:\\
+
+      \begin{tabular}{rcll}
+         1 & : \hspace{0.3cm} & LIT (1); &\% increment $S$\\
+         2 & : \hspace{0.3cm} & LIT (1); &\\
+         3 & : \hspace{0.3cm} & LOAD; &\\
+         4 & : \hspace{0.3cm} & LIT (1); &\\
+         5 & : \hspace{0.3cm} & ADD; &\\
+         6 & : \hspace{0.3cm} & STORE; &\\
+         
+         7 & : \hspace{0.3cm} & LIT (1); &\% compute stack address\\
+         8 & : \hspace{0.3cm} & LIT (1); &\\
+         9 & : \hspace{0.3cm} & LOAD; &\\
+         10 & : \hspace{0.3cm} & CAB(1,5); &\\
+         11 & : \hspace{0.3cm} & LIT (1); &\\
+         12 & : \hspace{0.3cm} & MULT; &\\
+         13 & : \hspace{0.3cm} & ADD; &\\
+         
+         14 & : \hspace{0.3cm} & LIT (1); &\% store 1 on $S+$\\
+         15 & : \hspace{0.3cm} & STORE; &\\
+         
+         16 & : \hspace{0.3cm} & LIT (0); &\% access t \\ 
+         
+         17 & : \hspace{0.3cm} & LIT (1); &\% compute stack address\\
+         18 & : \hspace{0.3cm} & LIT (1); &\\
+         19 & : \hspace{0.3cm} & LOAD; &\\
+         20 & : \hspace{0.3cm} & CAB (1,5); &\\
+         21 & : \hspace{0.3cm} & LIT (1); &\\
+         22 & : \hspace{0.3cm} & MULT; &\\
+         23 & : \hspace{0.3cm} & ADD; &\\
+        
+         24 & : \hspace{0.3cm} & LIT (1); &\% decrement $S$\\
+         25 & : \hspace{0.3cm} & LIT (1); &\\
+         26 & : \hspace{0.3cm} & LOAD; &\\
+         27 & : \hspace{0.3cm} & LIT (1); &\\
+         28 & : \hspace{0.3cm} & SUB; &\\
+         29 & : \hspace{0.3cm} & STORE; &\\
+         
+         30 & : \hspace{0.3cm} & LOAD; &\% load stack\\
+         
+         31 & : \hspace{0.3cm} & LIT (1); &\% add 1\\
+         32 & : \hspace{0.3cm} & ADD; &\\
+         
+         33 & : \hspace{0.3cm} & STORE; &\% store in t\\
+         34 & : \hspace{0.3cm} & RET; &\% end\\
+      \end{tabular}
+  
+     \item We define $sbt(S?-, st, a, a_t, a_f)$ and $sbt(S?-, st, a, a_t, a_f)$ by
+     
+     %
+     \begin{tabular}{lcll}
+     	sbt($S?+, st, a, a_t, a_f$) & := & vt($S$, st, a)   & \% pointer address, pc starts at $a$ \\
+     	&    & LOAD;         & \% load pointer \\
+     	&    & LIT(z);       & \% load max size \\
+     	&    & GEQ;          & \% is pointer greater or equal than z? \\
+     	&    &JFALSE($a_f$); & \% Jump to address for the false case \\
+     	&    & JMP($a_t$); & \% Otherwise, jump to address for true case
+     \end{tabular}\\
+     if $vtype($S$,st)=I, st(I)=(type,stack,J,z,n)$\\
+     
+     \begin{tabular}{lcll}
+     	sbt($S?-, st, a, a_t, a_f$) & := & a : LIT(0);       & \% load min size, pc starts at $a$ \\
+     	&    & vt($S$, st, a+1)   & \% pointer address, pc starts at $a+1$ \\
+     	&    & LOAD;         & \% load pointer \\
+     	&    & GEQ;          & \% is 0 greater or equal than pointer? \\
+     	&    &JFALSE($a_f$); & \% Jump to address for the false case \\
+     	&    & JMP($a_t$); & \% Otherwise, jump to address for true case
+     \end{tabular}
+    
+    Moreover, $sbt$ for the composite Boolean expressions is defined analogous to Definition 17.1 (we omit the last component for the level $l$ since we do not consider procedures here.)
+ 
+     
+     
+  \end{enumerate}
+\end{solution}

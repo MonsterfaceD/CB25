@@ -1,0 +1,80 @@
+\documentclass[a4paper]{article}
+
+%\newcommand{\exnumber}{5}% \newif\ifsolution\solutiontrue%\newif\ifprog\progfalse'
+%\newif\ifsolution\solutionfalse
+%\newif\ifprog\progtrue
+
+\input{../commands}
+
+\begin{document}
+
+\header{January 13th}
+
+\section*{General Remarks}
+\begin{itemize}
+    \item \emph{Important}: You must not touch methods/functionality outside of the \texttt{checkDeclaredBeforeUsed} function.
+        You may implement your own additional methods and classes, but not change any existing ones.
+    \item Please make sure that as a default, no GUI or similar blocking interface is opened when using your implementation.
+    \item Submit any files necessary and do not change file layouts if not strictly required for achieving the task at hand. \textbf{Never} make changes to generated files (i.e., visitors generated for a grammar by ANTLR, etc), always use subclassing or similar techniques to keep your functionality separate. Keep in mind that your code needs to be tested in an automated fashion!
+    \item Make sure that your zip file contains the ``i2Compiler'' folder, with that folder containing at least the ``src'' folder with all necessary files for compiling your code.\\Example: ``/i2Compiler/src/Main.java'' should be a valid path in your archive.
+%    To test your zip archive, we provide the scripts \texttt{test\_zip.sh} (Linux) and \texttt{test\_zip.bat} (Windows, needs path to your \texttt{javac.exe} and \texttt{jar.exe}, see top of file).
+%    These scripts---when given a zip archive---unzip, compile and run your solution.
+%    An example execution under Linux would be \texttt{./test\_zip.sh mysolution.zip}.
+
+%  \item Implement the methods indicated by \texttt{TODO} but do not modify the signatures of the provided methods. You are however allowed to add your own methods, data structures and classes in the code.
+%  \item Please document essential parts of your code properly such that it is possible to grasp your ideas. Although the code will be graded mostly by functionality, your comments will help us to clarify whether a bug is a conceptual mistake or just a small error.
+%  \item The practical part will be implemented in Java 8. You may use the standard library to solve the programming tasks. Other libraries are not allowed.
+%  \item Submitted code which does not execute results in 0 points.
+%  \item Your solutions to the practical programming exercise should be uploaded via L2P as a zip file.
+%  \item If you have questions regarding the exercises and/or lecture, feel free to post in the L2P forum, write us an email at \href{mailto:cb2018@i2.informatik.rwth-aachen.de}{cb2018@i2.informatik.rwth-aachen.de} or visit us at our office.
+\end{itemize}
+
+\begin{exercise}{100}
+In this exercise we implement a semantic check. In our \textit{WHILE} language we require that every variable identifier is \emph{declared} before the variable is used (read or set). Additionally, a variable defined inside a scope like an \texttt{if} statement or a \texttt{while} loop is not visible outside this scope. We do not care whether a variable has been \emph{initialised} before it is read. Examples:\newline
+
+\begin{minipage}{0.5\textwidth}
+This is valid:\ \\
+\begin{lstlisting}[numbers=none]
+int x; int y;
+if (x <= y) {
+    write("Hello world.");
+}
+write(x);
+\end{lstlisting}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+This is not valid (\texttt{y} is undefined and \texttt{z} is undefined outside the \texttt{if}-statement):
+\begin{lstlisting}[numbers=none]
+int x;
+if (x <= y) {
+    int z;
+}
+write(z);
+\end{lstlisting}
+
+\end{minipage}
+
+Implement \texttt{checker.DeclarationChecker.checkDeclaredBeforeUsed()}.
+
+\emph{Hint: for this you do not need to implement any attributed grammars and their evaluation. Instead simply walking the abstract syntax tree once and checking the required property suffices.}
+
+To check the type of a given non-terminal or token, you can use the methods in \texttt{util.WhileAlphabet}.
+
+An example call of the program is:
+\begin{lstlisting}[numbers=none,basicstyle=\ttfamily,breaklines=true]
+  $java -cp bin Main tests/valid.txt
+  ...
+  Every variable was declared before use: true
+\end{lstlisting}
+
+You can also generate a visualization of the abstract syntax tree obtained by the parser. With the optional commandline argument \texttt{-{}-dot output.dot} the abstract syntax tree is written as \href{http://www.graphviz.org/documentation}{dot output} to the given file. Then the following command generates a PDF depicting the tree:
+\begin{lstlisting}[numbers=none,basicstyle=\ttfamily,breaklines=true]
+  $dot -Tpdf output.dot -o output.pdf
+\end{lstlisting}
+\end{exercise}
+
+\begin{solution}
+For the solution see the code in \texttt{i2CompilerSolution}.
+\end{solution}
+
+\end{document}

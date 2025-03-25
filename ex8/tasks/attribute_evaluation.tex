@@ -1,0 +1,235 @@
+%
+%
+\begin{exercise}{40}
+  Reconsider the attribute grammar $G$ for type checking from Example 11.5. Now consider the following program $c$:
+  %
+  \begin{align*}
+     &\textsf{int}~y;~\textsf{bool}~x; \\
+     %
+     &y:=1; \\
+     %
+     &x:=5+y<7
+  \end{align*}
+  with the following syntax tree, where we enumerated all nodes:
+  %
+  \begin{center}
+  \begin{tikzpicture}
+    [scale=0.8, every node/.style={transform shape}, node distance = 1.5cm, auto, ->,>=stealth',shorten >=1pt,auto,semithick]
+    %    \tikzstyle{every state}=[circle, radius = 2pt]
+    \tikzstyle{state}=[circle,draw=black,fill=gray,minimum size=5pt,inner sep=0pt]
+    
+    \node[] (0) {Pgm, 0};
+    
+        \node[] (1) [below left of=0] {Dcl, 1};
+    
+            \node[] (2) [below left of=1] {Typ, 2};
+                \node[] (3) [below of=2] {int, 3};
+            \node[] (4) [right of=2] {var, 4};
+            \node[] (5) [right of=4] {;, 5};
+            \node[] (6) [right of=5] {Dcl, 6};
+            
+                \node[] (7) [below left of=6] {Typ, 7};
+                    \node[] (8) [below of=7] {bool, 8};
+                \node[] (9) [right of=7] {var, 9};
+                \node[] (10) [right of=9] {;, 10};
+                \node[] (11) [right of=10] {Dcl, 11};
+                
+                    \node[] (12) [below of=11] {$\varepsilon$, 12};       
+  
+  
+        \node[] (13) [above right of=6] {Cmd, 13};
+        
+            \node[] (14) [right of=6] {var, 14};
+            \node[] (15) [right of=14] {:=, 15};
+            \node[] (16) [right of=15] {Exp, 16};
+                \node[] (17) [below of=16] {num, 17};
+            
+            \node[] (18) [right of=16] {;, 18};
+            \node[] (19) [right of=18] {Cmd, 19};
+            
+                \node[] (20) [below left of=19] {var, 20};
+                \node[] (21) [right of=20] {:=, 21};
+                \node[] (22) [right of=21] {Exp, 22};
+                    \node[] (23) [below of=20] {Exp, 23};
+                        \node[] (24) [below left of=23] {Exp, 24};
+                            \node[] (25) [below of=24] {num, 25};
+                        \node[] (26) [right of=24] {$+$, 26};
+                        \node[] (27) [right of=26] {Exp, 27};
+                            \node[] (28) [below of=27] {var, 28};
+                    \node[] (29) [right of=23] {$<$, 29};
+                    \node[] (30) [right of=29] {Exp, 30};
+                        \node[] (31) [below of=30] {num, 31};
+                        
+                \node[] (32) [right of=22] {;, 32};
+                \node[] (33) [right of=32] {Cmd, 33};
+                    \node[] (34) [below of=33] {$\varepsilon$, 34};
+                    
+                    
+    \path
+    (0)  edge (1)
+         edge (13)
+    (1)  edge (2)
+         edge (4)
+         edge (5)
+         edge (6)
+    (2)  edge (3)
+    (6)  edge (7)
+         edge (9)
+         edge (10)
+         edge (11)
+    (7)  edge (8)
+    (11) edge (12)
+    (13) edge (14)
+         edge (15)
+         edge (16)
+         edge (18)
+         edge (19)
+    (16) edge (17)
+    (19) edge (20)
+         edge (21)
+         edge (22)
+         edge (32)
+         edge (33)
+    (22) edge (23)
+         edge (29)
+         edge (30)
+    (23) edge (24)
+         edge (26)
+         edge (27)
+    (24) edge (25)
+    (27) edge (28)
+    (30) edge (31)
+    (33) edge (34)
+    ;
+  \end{tikzpicture}
+  \end{center}
+
+  \begin{enumerate}[(a)]
+    %
+    %
+    \item Perform attribute evaluation by topological sorting. For that, provide a table of the form \\
+    %
+    \begin{center}
+    \begin{tabular}{c | c }
+    	 Node of $D_t$ & Evaluation \\
+    	 \hline\hline \\
+    	 %
+    	 \vdots & \vdots
+    \end{tabular}
+    \end{center}
+    %
+    such that reading the entries of the first column from top to bottom yields a topological sorting of $D_t$ and where the second column gives the corresponding attribute evaluations.
+    %
+    \item Perform attribute evaluation by recursive functions, starting with the function call \textlangle ok, Pgm\textrangle(0). Provide a table similar to task \textbf{(a)}, but now provide the function call and its return value, i.e. of the form
+    %
+    \begin{center}
+    \begin{tabular}{c | c }
+    	 Function Call & Return Value \\
+    	 \hline\hline \\
+    	 %
+    	 \textlangle ok, Pgm\textrangle(0) & \dots \\
+    	 \vdots & \vdots
+    \end{tabular}
+    \end{center}
+    %
+    such that the table is ordered by the iterative order every functions is called in a valid recursive evaluation. You may use indents to format your function calls.
+    %
+    \item Is $G$ an $L$-attributed grammar? Justify your answer.
+    %
+    \item Is it possible to use LL parsing with integrated attribute evaluation (cf.\ Slide 13.25) for this grammar? Justify your answer.
+    %
+  \end{enumerate}
+\end{exercise}
+%
+%
+%
+\begin{solution}
+  %
+  \begin{enumerate}[(a)]
+    \item 
+    %
+    \begin{center}
+    	\begin{tabular}{c | c }
+    		Node of $D_t$ & Evaluation \\
+    		\hline\hline \\
+    		%
+    		typ.2 & int \\
+    		%
+    		typ.7 & bool \\
+    		%
+    		st.11 & $\{x \mapsto err, y \mapsto err\}$ \\
+    		%
+    		st.6 & $\{x \mapsto bool, y \mapsto err\}$ \\
+    		%
+    		st.1 & $\{x \mapsto bool, y \mapsto int\}$ \\
+    		%
+    		env.13 & $\{x \mapsto bool, y \mapsto int\}$ \\
+    		%
+    		env.16 & $\{x \mapsto bool, y \mapsto int\}$ \\
+    		%
+    		typ.16 & int \\
+    		%
+    		env.19 & $\{x \mapsto bool, y \mapsto int\}$ \\
+    		%
+    		env.22 & $\{x \mapsto bool, y \mapsto int\}$ \\
+    		%
+    		env.23 & $\{x \mapsto bool, y \mapsto int\}$ \\
+    		%
+    		env.24 & $\{x \mapsto bool, y \mapsto int\}$ \\
+    		%
+    		typ.24 & int \\
+    		%
+    		env.27 & $\{x \mapsto bool, y \mapsto int\}$ \\
+    		%
+    		typ.27 & int \\
+    		%
+    		typ.23 & int \\
+    		%
+    		env.30 & $\{x \mapsto bool, y \mapsto int\}$ \\
+    		%
+    		typ.30 & int \\
+    		%
+    		env.33 & $\{x \mapsto bool, y \mapsto int\}$ \\
+    		%
+    		ok.33 & true \\
+    		%
+    		ok.19 & true \\
+    		%
+    		ok.13 & true \\
+    		%
+    	     ok.0 & true
+    	\end{tabular}
+    \end{center}
+    %
+    \item 
+        Let $\alpha=\{x \mapsto bool, y \mapsto int\}$.
+        \begin{center}
+        \begin{tabular}{l | c }
+    	    Function Call & Return Value \\
+    	    \hline\hline \\
+    	    %
+    	    \textlangle ok, Pgm\textrangle(0) & true \\
+    	    \quad\textlangle st, Dcl\textrangle(1) & $\{x \mapsto bool, y \mapsto int\}=\alpha$\\
+    	    \quad\quad\textlangle st, Dcl\textrangle(6) & $\{x \mapsto bool, y \mapsto err\}$\\
+    	    \quad\quad\quad\textlangle st, Dcl\textrangle(11) & $\{x \mapsto err, y \mapsto err\}$\\
+    	    \quad\quad\quad\textlangle typ, Typ\textrangle(7) & bool\\
+    	    \quad\quad\textlangle typ, Typ\textrangle(2) & int\\
+    	    \quad\textlangle ok, Cmd\textrangle(13, $\alpha$) & true \\
+    	    \quad\quad\textlangle typ, Exp\textrangle(16, $\alpha$) & int\\
+    	    \quad\quad\textlangle ok, Cmd\textrangle(19, $\alpha$) & true \\
+    	    \quad\quad\quad\textlangle typ, Exp\textrangle(22, $\alpha$) & bool \\
+    	    \quad\quad\quad\quad\textlangle typ, Exp\textrangle(23, $\alpha$) & int \\
+    	    \quad\quad\quad\quad\quad\textlangle typ, Exp\textrangle(24, $\alpha$) & int \\
+    	    \quad\quad\quad\quad\quad\textlangle typ, Exp\textrangle(27, $\alpha$) & int \\
+    	    \quad\quad\quad\quad\textlangle typ, Exp\textrangle(30, $\alpha$) & int \\
+    	    \quad\quad\quad\textlangle ok, Cmd\textrangle(33, $\alpha$) & true \\
+        \end{tabular}
+        \end{center}
+    %
+    \item Yes: Whenever we consider an equation with an inherited attribute on the left-hand side, then the synthesized attributes occurring on the right-hand side has a strictly smaller index: The only such equation is $env.2 = st.1$, however this satisfies the condition.
+    %
+    \item Since we have left-recursion in the Exp part of the grammar, we have $G\not \in LL(k)$ for all $k\in \Nats$. It is thus not possible to use LL parsing for this grammar.
+    %
+    %
+  \end{enumerate}
+\end{solution}

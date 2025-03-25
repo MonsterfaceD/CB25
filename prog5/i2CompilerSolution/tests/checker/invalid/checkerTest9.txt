@@ -1,0 +1,8 @@
+while (1 < 0) {
+	int z;
+    while (z < 0) {
+        write("hello");
+    }
+    z = 0;
+}
+write(z);	

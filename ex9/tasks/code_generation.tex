@@ -1,0 +1,56 @@
+\begin{exercise}{30}
+Consider the following EPL program:
+\begin{lstlisting}[numbers=none]
+in/out x;
+var y;
+proc P;
+	x := 3 * x
+end;
+proc Q;
+	x := x - y
+end;
+if x <= 100 or y == x then
+	P()
+else
+    y := 5;
+	Q()
+end
+end.
+\end{lstlisting}
+
+
+Translate the EPL program to abstract machine (AM) code.
+
+\end{exercise}
+
+\begin{solution}
+    The AM code is as follows:
+    \begin{lstlisting}[numbers=none]
+        1: CALL(13,0,1); // Start: call Main()
+        2: JMP(0);       // Terminated
+        3: LIT(3);       // Begin P()
+        4: LOAD(2,1)
+        5: MULT;
+        6: STORE(2,1);   // x := 3 * x
+        7: RET;          // End P()
+        8: LOAD(2,1);    // Begin Q()
+        9: LOAD(1,1);
+       10: SUB;
+       11: STORE(2,1);   // x := x - y
+       12: RET;          // End Q()
+       13: LOAD(1,1);    // Begin Main()
+       14: LIT(100);
+       15: LEQ;          // x <= 100
+       16: LOAD(0,1);
+       17: LOAD(1,1);
+       18: EQ;           // y == x
+       19: OR;           // x <= 100 or y == x
+       20: JFALSE(23);
+       21: CALL(3,0,0);  // P()
+       22: JMP(26);
+       23: LIT(5);
+       24: STORE(0,1);   // y := 5
+       25: CALL(8,0,0);  // Q()
+       26: RET;          // End Main()
+    \end{lstlisting}
+\end{solution}

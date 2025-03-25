@@ -1,0 +1,6 @@
+write("Please enter a temperature in Celsius without comma/point: (example: 32.15 should be entered as 3215)");
+int celsius = read();
+
+int fahrenheit = 180 * celsius + 3200;
+write("Temperature in Fahrenheit is: ");
+write(fahrenheit);

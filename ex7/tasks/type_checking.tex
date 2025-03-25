@@ -1,0 +1,100 @@
+\newcommand{\ret}{\textsf{return}}
+\newcommand{\FId}{F\!I\!d}
+\newcommand{\Id}{I\!d}
+\begin{exercise}{30}	
+Reconsider the attribute grammar for type checking from Example 11.5. In this task, we extend this attribute grammar to deal with type correct function calls and requirements regarding $\ret$ statements.
+
+\begin{enumerate}[(a)]
+	\item We extend the context-free grammar such that every program starts with a sequence of declarations of \emph{function headers}.
+	That is, we modify the production for the nonterminal $Pgm$, introduce productions for the new nonterminal $FuncDcl$, and add a production for the nonterminal $Exp$ to allow for function calls:
+	%
+	\begin{align*}
+	     Pgm  ~{}\rightarrow {}~& FuncDcl~Dcl~Cmd \\
+	     %
+	     FuncDcl  ~{}\rightarrow~{} & \varepsilon \\
+	     ~{}\mid{}~& Typ~\textsf{function}(Typ);~ FuncDcl \qquad \text{(use $id.2$ to refer to the identifier of the function)} \\
+	     %
+	     \vdots& \\
+	     %
+	      Exp  ~{}\rightarrow~{} & \textsf{function}(Exp) \\
+	      %
+	      \vdots&
+	\end{align*}
+	%
+	Here we assume for simplicity that every function has exactly one argument, and that we are given a set $\FId$ of \emph{function identifiers}, which is disjoint from the set $\Id$ of variable identifiers. Extend the attribute grammar to additionally check for:
+	%
+	\begin{enumerate}
+	   \item \emph{Declaredness:} The header of every function that is invoked in a program must be declared.
+	   %
+	   \item \emph{Well-typedness:} The type of the expression that is passed to a function must match the expected type of the argument according to the declaration. Furthermore, if a function occurs in an expression, then that expression must be well-typed.
+	\end{enumerate}
+	%
+	%
+	%
+	\item Now we extend the grammar by \emph{$\ret$ statements} and \emph{conditional branching}, i.e., we add the following two production rules:
+	\begin{align*}
+	    Cmd  ~{}\rightarrow~{} & \textsf{if}~ Exp~ \textsf{then}~ \{~ Cmd~ \}~ \textsf{else}~ \{~ Cmd~ \}~ Cmd\\
+	    ~{}\mid{}~& \ret~ \textsf{var};
+	\end{align*} 
+	Construct an attribute grammar to check for \emph{return-safety}: Every possible path in the control flow graph of the program must eventually reach a $\ret$ statement.
+	For example, 
+	%
+	\begin{center}
+	   \textsf{if~4<5~\{~ \ret~v;~\}~else~\{\} } 
+	\end{center}
+    %
+	is \emph{not} return-safe. However, 
+	%
+	\begin{center}
+	\textsf{if~4<5~{}\{~ \ret~v;~\}~else~\{\}~\ret~b;} 
+	\end{center}
+   %
+	\emph{is} return-safe.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\begin{enumerate}[(a)]
+%
+%
+\newcommand{\dotcup}{\,\dot{\cup}\,}
+\item We extend the synthesised attribute $st$ to also map function identifiers to pairs of types $(T_1, T_1)$, where the first component denotes the return type of the function, and where the second component denotes the type of the argument. Given a pair $(T_1, T_2)$, we denote by $(T_1, T_2)[1] := T_1$ (resp.\ $(T_1, T_2)[2] := T_2$) the first (resp.\ second) component of $(T_1, T_1)$. Furthermore, we use $\dotcup$ as a union of functions, i.e. $(f \dotcup g)(x) = f(x)$ if $x$ is in $f$'s domain and else $(f \dotcup g)(x) = g(x)$. We depict additional equations only:
+%
+\begin{align*}
+Pgm  ~{}\rightarrow {}~& FuncDcl~Dcl~Cmd  & ok.0=ok.3 \quad env.3=st.1 \dotcup st.2\\
+%
+FuncDcl  ~{}\rightarrow~{} & \varepsilon & st.0=[id \mapsto \textnormal{err} ~\mid~id \in \FId ] \\
+~{}\mid{}~& Typ~\textsf{function}(Typ);~ FuncDcl  &  st.0 = st.7[id.2 \mapsto (typ.1, typ.4)]\\
+%            1           2       3 4 56    7
+\vdots & \\
+%
+Cmd  ~{}\rightarrow~{} & var := Exp; Cmd & ok.0= (id.1 \in \Id ~\wedge~env.0(id.1) = typ.3 \ne \textnormal{err}~\wedge~ok.5)~ \\
+%                         1   2  3 4  5
+&&\quad env.3=env.0~env.5=env.0\\
+%
+\vdots & \\
+%
+Exp  ~{}\rightarrow~{} & var           &   typ.0 = \text{if}~(id.1 \in \Id) ~\text{then}~ env.0(id.1) ~\text{else}~ err \\
+Exp  ~{}\rightarrow~{} & function(Exp) &   typ.0 = \text{if}~ (id.1 \in \FId ~\wedge~env.0(id.1)[1]=typ.3)  \\
+&& \quad \text{then}~env.0(id.1)[2]~\text{else}~ err\\ 
+&& \quad env.3 = env.0\\
+%
+\vdots&
+%
+\end{align*}
+%
+%
+%
+\item We use $Syn=\{r\}$ and $Inh=\emptyset$ with the following grammar:
+\begin{align*}
+	     Pgm  ~{}\rightarrow {}~& FuncDcl~Dcl~Cmd                                                    & r.0=r.3 \\
+	     %
+	      Cmd  ~{}\rightarrow~{} & \varepsilon                                                          & r.0=false\\
+	      ~{}\mid{}~& \textsf{var} := Exp;~ Cmd                                                      & r.0=r.5\\
+	      ~{}\mid{}~& \textsf{if}~ Exp~ \textsf{then}~ \{~ Cmd~ \}~ \textsf{else}~ \{~ Cmd~ \}~ Cmd  & r.0=(r.5 \land r.9) \lor r.11\\
+	      ~{}\mid{}~& \ret~\textsf{var};                                                             & r.0=true\\
+	      %
+	      \ldots&~ \text{(other rules)}                                                              & r.0=false
+	\end{align*}
+\end{enumerate}
+\end{solution}

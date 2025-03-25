@@ -1,0 +1,6 @@
+int x;
+int z;
+if (x <= y) {
+	int z;
+}
+write(z);	

@@ -1,0 +1,3 @@
+S' -> S EOF
+S -> A A
+A -> a A | b

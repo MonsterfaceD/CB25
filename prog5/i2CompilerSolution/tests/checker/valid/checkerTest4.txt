@@ -1,0 +1,10 @@
+int x;
+int y;
+while (x <= 1) {
+    int z;
+    y = z;
+    if (z == 1) {
+        int z;
+        z = z;
+    }   
+}

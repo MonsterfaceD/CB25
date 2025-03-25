@@ -1,0 +1,13 @@
+/* A stupid program to test the grammar */
+int x;
+x = 10;
+int s;
+s = 0;
+if (x > 0) {
+    x = x / 2;
+    x = o * 3;
+}
+while (t <= xys) {
+    b = read();
+    write(b);
+}

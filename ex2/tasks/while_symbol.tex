@@ -1,0 +1,170 @@
+\begin{exercise}{15+10+10}
+\begin{enumerate}
+  \item[(a)] In order to design a lexer for our Java-style programming language \while, we want to define a mapping from lexemes to symbols. Complete the following table where we already defined the lexemes and the symbol class for identifiers. Assign to each lexeme in the table an appropriate symbol class, token, and symbol. Within a symbol, the value of a lexeme can be accessed via \emph{value}. For instance, if the lexeme \emph{abc} is an identifier, then (id, \emph{abc}) is the corresponding symbol. We use the characters \textvisiblespace{} for whitespaces, \textbackslash{}t for tabular, and \textbackslash{}n and \textbackslash{}r for newlines. Other lexemes may be expressed as regular expressions or are abbreviated with $\ldots$ to increase readability.
+\newcolumntype{L}{>{\ttfamily}l}
+\begin{longtable}{L|l|l|l}
+      \hline
+      lexeme              & symbol class ~~ & token ~~~~ & symbol ~~~~ \\
+      \hline
+      int        &   &  &  \\
+      while      &   &  &  \\
+      if         &   &  &  \\
+      else       &   &  &  \\
+
+      ==         &   &  &  \\
+      <          &   &  &  \\
+
+      !          &  &  &  \\
+      \&\&       &  &  &  \\
+      ||         &  &  &  \\
+
+      +          &  &  &  \\
+      *          &  &  &  \\
+      /          &  &  &  \\
+      \%         &  &  &  \\
+
+      ;          &  &  &  \\
+      =          &  &  &  \\
+      (          &  &  &  \\
+      )          &  &  &  \\
+      \{         &  &  &  \\
+      \}         &  &  &  \\
+
+      0 $\mid ($- $\mid \varepsilon)\{$1$,\ldots,$9$\}\{$0$,\ldots$,9$\}^\ast$ &  &  &  \\
+      $\{$a,$\ldots$,z,A,$\ldots$,Z,\_$\}\{$a,$\ldots$,z,A,$\ldots$,Z,0,$\ldots$,9,\_$\}^\ast$ & identifier & id  & (id, \emph{value}) \\
+      "$\{$a,$\ldots$,z,A,$\ldots$,Z,0,$\ldots$,9,\_\textvisiblespace+-*$\ldots\}^\ast$" &  &  &  \\
+      true       &  &  &  \\
+      false      &  &  &  \\
+
+      //\textnormal{\ldots (}\textbackslash{}n $\mid$ \textbackslash{}r $\mid$ \textbackslash{}r\textbackslash{}n) &  &  &  \\
+      /*\textnormal{\ldots}*/     &  &  &  \\
+      \textvisiblespace  &  &  &  \\
+      \textbackslash{}t  &  &  &  \\
+      \textbackslash{}n  &  &  &  \\
+      \textbackslash{}r  &  &  &  \\
+
+      \hline
+\end{longtable}
+
+
+
+  \item[(b)] Decompose the following program (also attached as a txt file) into a sequence of lexemes and translate each lexeme into a symbol according to your solution in \textbf{(a)}.
+  
+  \begin{center}
+  \begin{tabular}{c}
+    \begin{lstlisting}
+/* collatz problem */
+int n = 25;
+while ( 0 < n ) {
+	if (n % 2 == 0) { //even?
+		n =n/2;
+	} else {
+		n =n*3+1;
+	}
+}
+    \end{lstlisting}
+  \end{tabular}
+\end{center}
+
+ \item[(c)] Consider the following program:
+ 
+\begin{center}
+	\begin{tabular}{c}
+		\begin{lstlisting}
+int intx = 25;
+		\end{lstlisting}
+	\end{tabular}~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\end{center}
+%
+%
+Give the sequence of symbols a lexer should produce. Give two additional (but incorrect) sequences of symbols a lexer might produce. How can the lexer ensure that the decomposition of the program into lexemes is \emph{unique}?
+
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\newcolumntype{L}{>{\ttfamily}l} % \texttt{} version of "l" column type
+
+\begin{enumerate}
+  \item[(a)] There are several possible ways to solve this task. For example, all keywords may be identified with the same token and distinguished only through an attribute or each keyword may be identified by a unique token. The former solution is presented here, the latter is chosen for the implementation.
+\begin{longtable}{Llll}
+      \hline
+      lexeme              & symbol class & token & symbol \\
+      \hline
+      int        & keywords  & key & (key, int) \\
+      while      & keywords  & key & (key, while) \\
+      if         & keywords  & key & (key, if) \\
+      else       & keywords  & key & (key, else) \\
+
+      ==         & relation  & rel & (rel, eq) \\
+      <          & relation  & rel & (rel, lt) \\
+
+      !          & bool. op. & bool & (bool, not) \\
+      \&\&       & bool. op. & bool & (bool, and) \\
+      ||         & bool. op. & bool & (bool, or) \\
+
+      +          & arith. op. & aop & (aop, plus) \\
+      *          & arith. op. & aop & (aop, mult) \\
+      /          & arith. op. & aop & (aop, divide) \\
+      \%          & arith. op. & aop & (aop, mod) \\
+
+      ;          & special symbol & sym & (sym, semicolon) \\
+      =          & special symbol & sym & (sym, assignment) \\
+      (          & special symbol & sym & (sym, lpar) \\
+      )          & special symbol & sym & (sym, rpar) \\
+      \{         & special symbol & sym & (sym, lbrace) \\
+      \}         & special symbol & sym & (sym, rbrace) \\
+
+      0 $\mid ($- $\mid \varepsilon)\{$1$\ldots$9$\}\{$0$\ldots$9$\}^\ast$ & numbers & num & (num, value) \\
+      $\{$a$\ldots$zA$\ldots$Z\_$\}\{$a$\ldots$zA$\ldots$Z0$\ldots$9\_$\}^\ast$ & identifier & id & (id, value) \\
+      "$\{$a$\ldots$zA$\ldots$Z0$\ldots$9\_\textvisiblespace+-*$\ldots\}^\ast$" & string constant & string & (string, value) \\
+      true       & boolean constant & bconst & (bconst, true) \\
+      false      & boolean constant & bconst & (bconst, false) \\
+
+      //\textnormal{\ldots (}\textbackslash{}n $\mid$ \textbackslash{}r $\mid$ \textbackslash{}r\textbackslash{}n) & comment & cmt & (cmt, cmtsingle) \\
+      /*\textnormal{\ldots}*/     & comment & cmt & (cmt, cmtmulti) \\
+      \textvisiblespace  & blanks & blank & none, will be ignored \\
+      \textbackslash{}t  & blanks & blank & none, will be ignored \\
+      \textbackslash{}n  & blanks & blank & none, will be ignored \\
+      \textbackslash{}r  & blanks & blank & none, will be ignored \\
+
+      \hline
+\end{longtable}
+
+  \item[(b)] We have the following lexemes, where we separate lexemes by a centred dot:
+    \begin{itemize}
+        \item[] /* collatz problem */ $\cdot$ \textbackslash{}n
+        \item[] int $\cdot$ \textvisiblespace{} $\cdot$ n $\cdot$ \textvisiblespace{} $\cdot$ = $\cdot$ \textvisiblespace{} $\cdot$ 25 $\cdot$ ; $\cdot$ \textbackslash{}n
+        \item[] while $\cdot$ \textvisiblespace{} $\cdot$ ( $\cdot$ \textvisiblespace{} $\cdot$ 0 $\cdot$ \textvisiblespace{} $\cdot$ < $\cdot$ \textvisiblespace{} $\cdot$ n $\cdot$ \textvisiblespace{} $\cdot$ ) $\cdot$ \textvisiblespace{} $\cdot$ \{$\cdot$ \textbackslash{}n
+        \item[] \textbackslash{}t $\cdot$ if $\cdot$ \textvisiblespace{} $\cdot$ ( $\cdot$ n $\cdot$ \textvisiblespace{} $\cdot$ \% $\cdot$ \textvisiblespace{} $\cdot$ 2 $\cdot$ \textvisiblespace{} $\cdot$ == $\cdot$ \textvisiblespace{} $\cdot$ 0 $\cdot$ ) $\cdot$ \textvisiblespace{} $\cdot$ \{ $\cdot$ \textvisiblespace{} $\cdot$ //even?
+        \item[] \textbackslash{}t $\cdot$ \textbackslash{}t $\cdot$ n $\cdot$ \textvisiblespace{} $\cdot$ = $\cdot$ n $\cdot$ / $\cdot$ 2 $\cdot$ ; $\cdot$ \textbackslash{}n
+        \item[] \textbackslash{}t $\cdot$ \} $\cdot$ \textvisiblespace{} $\cdot$ else $\cdot$ \textvisiblespace{} $\cdot$ \{ $\cdot$ \textbackslash{}n
+        \item[] \textbackslash{}t $\cdot$ \textbackslash{}t $\cdot$ n $\cdot$ \textvisiblespace{} $\cdot$ = $\cdot$ n $\cdot$ * $\cdot$ 3 $\cdot$ + $\cdot$ 1 $\cdot$ ; $\cdot$ \textbackslash{}n
+        \item[] \textbackslash{}t $\cdot$ \} $\cdot$ \textbackslash{}n
+        \item[] \} $\cdot$ \textbackslash{}n
+    \end{itemize}
+
+    We have the following symbol sequence (with blanks ignored):
+    \begin{itemize}
+        \item (cmt, cmtmulti)
+        \item (key, int) (id, n) (sym, assigment) (num, 25) (sym, semicolon)
+        \item (key, while) (sym, lpar) (num, 0) (rel, lt) (id, n) (sym, rpar) (sym, lbrace)
+        \item (key, if) (sym, lpar) (id, n) (aop, mod) (num, 2) (rel, eq) (num, 0) (sym,rpar) (sym, lbrace) (cmt, cmtsingle)
+        \item (id, n) (sym, assignment) (id, n) (aop, divide) (num, 2) (sym, semicolon)
+ 		\item (sym, rbrace) (key, else) (sym, lbrace)
+ 		\item (id, n) (sym, assignment) (id, n) (aop, mult) (num, 3) (aop, plus) (num,1) (sym, semicolon)
+ 		\item (sym, rbrace)
+ 		\item (sym,rbrace)
+    \end{itemize}
+
+
+\item[(c)] Correct decomposition: (key, int) (id, intx) (sym, assignment) (num,25) (sym, semicolon) \\
+Incorrect decomposition (1): (key, int) (key int) (id, x) (sym, assignment)(num, 25)(sym, semicolon) \\
+Incorrect decomposition (2): (id, int) (id intx) (sym, assignment)(num, 25)(sym, semicolon) \\
+%
+A unique decomposition of the program text into symbols can be ensured by a First-Longest-Match Analysis (cf.\ Lecture 3).
+\end{enumerate}
+\end{solution}
+
+
+

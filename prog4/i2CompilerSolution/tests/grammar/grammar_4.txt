@@ -1,0 +1,4 @@
+S' -> S EOF
+S -> A | B d
+A -> a A b | B e
+B -> a B c | a c

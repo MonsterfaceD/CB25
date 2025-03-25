@@ -1,0 +1,126 @@
+\begin{exercise}{20}
+Consider the following grammar $G$:
+%
+\newcommand{\false}{\textsf{false}}
+\begin{align*}
+%
+   S'  & \quad \to \quad S \\
+   S   & \quad \to \quad  \false ~\mid~ S \Rightarrow S ~\mid~ S \wedge S           
+%
+\end{align*}
+%
+%
+\begin{enumerate}[(a)]
+	  \item Compute $LR(1)(G)$.
+	  %
+	  \item Give all conflicting items, i.e., all $I \in LR(1)(G)$ such that $I$ has a
+	   shift/reduce conflict or $I$ has a reduce/reduce conflict.
+	   %
+	  \item Since there are conflicting items, we have $G \not\in LR(1)$ and the $LR(1)$ action function (cf.\ Definition~10.14) is therefore not well-defined. The situation is similar to Example~11.2. Provide an $LR(1)$ action function such that the resulting syntax trees adhere to the following rules:
+	  %
+	  \begin{itemize}
+	  	 \item $\wedge$ has a higher precedence than $\Rightarrow$.
+	  	 %
+	  	 \item $\wedge$ is left-associative.
+	  	 %
+	  	 \item $\Rightarrow$ is right-associative.
+	  \end{itemize}
+       %
+        For instance, $\false \Rightarrow \false \wedge \false \wedge \false \Rightarrow \false \Rightarrow \false$ is to be interpreted as 
+        %
+        \[
+        \false \Rightarrow (((\false \wedge \false) \wedge \false) \Rightarrow (\false \Rightarrow \false))
+        \]
+        %
+\end{enumerate}
+%
+\end{exercise}
+
+\begin{solution}
+	\newcommand{\false}{\textsf{false}}
+%
+\newcommand{\lri}[4]{[#1 \rightarrow #2 \cdot #3, ~ #4]}
+\begin{enumerate}[(a)]
+	\item
+	\begin{align*}
+	   LR(1)(\varepsilon) ~{}={}~&
+	   \left\{
+	    \lri{S'}{}{S}{\varepsilon}
+	   \right\} 
+	   \cup \left\{
+	      \lri{S}{}{\false}{x},\lri{S}{}{S\Rightarrow S}{x},\lri{S}{}{S \wedge S}{x} ~\mid~x \in \{ \varepsilon, \Rightarrow, \wedge\}
+	   \right\} \\
+	   %
+	   LR(1)(S) ~{}={}~ &
+	   \left\{
+	   \lri{S'}{S}{}{\varepsilon}
+	   \right\} 
+	   \cup \left\{
+	  \lri{S}{S}{\Rightarrow S}{x},\lri{S}{S}{\wedge S}{x} ~\mid~x \in \{ \varepsilon, \Rightarrow, \wedge\}
+	   \right\} \\
+	   %
+	   LR(1)(\false) ~{}={}~&
+	   \left\{ \lri{S}{\false}{}{x} ~\mid~x \in \{ \varepsilon, \Rightarrow, \wedge \} \right\}\\
+	   %
+	   LR(1)(S \Rightarrow) ~{}={}~&
+	   \left\{
+	    \lri{S}{S \Rightarrow}{S}{x}, \lri{S}{}{\false}{x}, \lri{S}{}{S \Rightarrow S}{x},
+	    \lri{S}{}{S \wedge S}{x}
+	    ~\mid~x \in \{ \varepsilon, \Rightarrow, \wedge \}
+	   \right\} \\
+	   %
+	   LR(1)(S \wedge) ~{}={}~&
+	   \left\{
+	   \lri{S}{S \wedge}{S}{x}, \lri{S}{}{\false}{x}, \lri{S}{}{S \Rightarrow S}{x},
+	   \lri{S}{}{S \wedge S}{x}
+	   ~\mid~x \in \{ \varepsilon, \Rightarrow, \wedge \}
+	   \right\}\\
+	   %
+	   LR(1)(S \Rightarrow S) ~{}={}~&
+	   \left\{
+	   \lri{S}{S \Rightarrow S}{}{x}, \lri{S}{S}{\Rightarrow S}{x}, \lri{S}{S}{\wedge S}{x}
+	   ~\mid~x \in \{ \varepsilon, \Rightarrow, \wedge \}
+	   \right\} \\
+	   %
+	   LR(1)(S \wedge S) ~{}={}~&
+	   \left\{
+	   \lri{S}{S \wedge S}{}{x}, \lri{S}{S}{\Rightarrow S}{x}, \lri{S}{S}{\wedge S}{x}
+	   ~\mid~x \in \{ \varepsilon, \Rightarrow, \wedge \}
+	   \right\}
+	   	\end{align*}
+	   	%
+	   	%
+	   	\item There are shift/reduce conflicts in $I=LR(1)(S \Rightarrow S)$ and $I'=LR(1)(S\wedge S)$.
+	   	%
+	   	\item \newcommand{\act}[3]{\textsf{act} (#1,#2) ~{}={}~& #3}
+	   	We use the following numbering:
+	   	\begin{align*}
+%
+   S'  & \quad \to \quad S & (0)\\
+   S   & \quad \to \quad  \false ~\mid~ S \Rightarrow S ~\mid~ S \wedge S &(1,2,3)          
+%
+\end{align*}
+	   	We define the action function for the conflicting items as follows:
+	   	%
+	   	\begin{align*}
+	   	    \act{I}{\varepsilon}{red~2} \\
+	   	    %
+	   	    \act{I}{\Rightarrow}{shift} \\
+	   	    %
+	   	    \act{I}{\wedge}{shift} \\
+	   	    %
+	   	    \act{I}{\false}{error} \\
+	   	    %
+	   	    \\
+	   	    %
+	   	    \act{I'}{\varepsilon}{red~3} \\
+	   	    %
+	   	    \act{I'}{\Rightarrow}{red~3} \\
+	   	    %
+	   	    \act{I'}{\wedge}{red~3} \\
+	   	    %
+	   	    \act{I'}{\false}{error} 
+	   	\end{align*}
+\end{enumerate}
+%
+\end{solution}

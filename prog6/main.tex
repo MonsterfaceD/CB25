@@ -1,0 +1,81 @@
+\documentclass[a4paper]{article}
+
+\input{../commands}
+
+\begin{document}
+
+\header{January 20th}
+
+%\section*{General Remarks}
+%\begin{itemize}
+%  \item This programming exercise is optional and provides bonus points for the exercise class.
+%\end{itemize}
+
+\begin{exercise}{10}
+  We now finish the implementation of our \icompiler{} by generating the corresponding \texttt{Jasmin} code for our parsed program.
+
+  As stated on the \href{http://jasmin.sourceforge.net/}{Jasmin Webpage}:\\
+  ``\emph{Jasmin is an assembler for the Java Virtual Machine. It takes ASCII descriptions of Java classes, written in a simple assembler-like syntax using the Java Virtual Machine instruction set. It converts them into binary Java class files, suitable for loading by a Java runtime system.}''
+
+  Our compiler generates code for the Jasmin language from the parsed \textit{While} language. As a recap the grammar for the \textit{While} language is given as follows:
+  \begin{center}
+  \begin{tabular}{lll}
+    start       &$\to$ & program EOF\\
+    program     &$\to$ & statement program $\mid$ statement\\
+    statement   &$\to$ & declaration SEM $\mid$ assignment SEM $\mid$ branch $\mid$ loop $\mid$ out SEM\\
+    declaration &$\to$ & INT ID\\
+    assignment  &$\to$ & ID ASSIGN expr $\mid$ ID ASSIGN READ LBRAC RBRAC\\
+    out         &$\to$ & WRITE LBRAC expr RBRAC $\mid$ WRITE LBRAC STRING RBRAC\\
+    branch      &$\to$ & IF LBRAC guard RBRAC LCBRAC program RCBRAC $\mid$\\
+                &      & IF LBRAC guard RBRAC LCBRAC program RCBRAC\\
+                &      & ELSE LCBRAC program RCBRAC\\
+    loop        &$\to$ & WHILE LBRAC guard RBRAC LCBRAC program RCBRAC\\
+    expr        &$\to$ & NUMBER $\mid$ ID $\mid$ subexpr\\
+    subexpr     &$\to$ & expr PLUS expr $\mid$ expr MINUS expr $\mid$ expr TIMES expr $\mid$ expr DIV expr\\
+                &      & $\mid$ expr MOD expr\\
+    guard       &$\to$ & relation $\mid$ subguard $\mid$ NOT LBRAC guard RBRAC\\
+    subguard    &$\to$ & guard AND guard $\mid$ guard OR guard\\
+    relation    &$\to$ & expr LT expr $\mid$ expr LEQ expr $\mid$ expr EQ expr $\mid$ expr NEQ expr $\mid$ expr GEQ expr\\
+                &      & $\mid$ expr GT expr
+  \end{tabular}
+  \end{center}
+
+Implement \texttt{generator.JasminGenerator.translateProgram(ASTNode)} which given the \emph{program} node in an abstract syntax tree returns the generated Jasmin Code as a string.
+
+\emph{Hint: It is a good approach to write methods for every language construct and call them recursively (similar to a recursive descent parser). Once you get the idea, it is actually less effort than you might think! And do not forget to zero-initialize newly declared variables!}
+
+Methods for generating \texttt{Jasmin} code for the main class, for writing to and reading from the console are already provided. You should also implement the method \texttt{translateExpr(ASTNode)} which translates an \emph{expression} into \texttt{Jasmin} code and is used in the method for writing to the console.
+
+Here are some helpful resources for the \texttt{Jasmin} language:
+  \begin{itemize}
+    \item Jasmin main page: \href{http://jasmin.sourceforge.net/}{http://jasmin.sourceforge.net/}
+    \item Jasmin user guide: \href{http://jasmin.sourceforge.net/guide.html}{http://jasmin.sourceforge.net/guide.html}
+    \item List of machine instructions for Jasmin: \href{http://jasmin.sourceforge.net/instructions.html}{http://jasmin.sourceforge.net/instructions.html}
+    \item Explanation of the machine instructions: \href{https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-6.html}{https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-6.html}
+  \end{itemize}
+
+  To test your implementation you can write code in the \textit{WHILE} language and run it through our compiler with:
+  \begin{lstlisting}[basicstyle=\ttfamily,numbers=none]
+$java -cp bin Main tests/gcd.txt --out gcd.j
+   \end{lstlisting}
+  The generated code is written to the given filename (in this example \texttt{gcd.j}). Next you can use \texttt{Jasmin} to build an executable Java class file:
+  \begin{lstlisting}[basicstyle=\ttfamily,numbers=none]
+$java -jar lib/jasmin.jar gcd.j
+   \end{lstlisting}
+You can execute the generated class file as a Java program and observe its behavior:
+  \begin{lstlisting}[basicstyle=\ttfamily,numbers=none]
+$java gcd
+42
+27
+GCD: 
+3
+   \end{lstlisting}
+
+  After finishing this exercise you now have your own simple compiler for Java code!
+\end{exercise}
+
+\begin{solution}
+  For the solution see the code in \texttt{i2CompilerSolution}.
+\end{solution}
+
+\end{document}

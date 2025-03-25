@@ -1,0 +1,98 @@
+\begin{exercise}{40}
+  In the following exercise we want to extend our while language (and the translation into AM code) by 
+  \begin{itemize}
+    \item \texttt{for}-loops:
+    \begin{center}
+      \texttt{for (} $X := A$ \texttt{;} $B$ \texttt{;} $C_1$ \texttt{) do } $C_2$ \texttt{ end}
+    \end{center}
+    \item and \texttt{let}-assignments:
+    \begin{center}
+      \texttt{let } $X := A$ \texttt{ in } $C$ \texttt{ end }
+    \end{center}
+  \end{itemize}
+
+  \begin{enumerate}
+    \item[(a)] Extend the translation function $ct$ to include \texttt{for}-loops as depicted above.
+      Such a \texttt{for}-loop repeatedly does the following: Evaluate the assignment $X := A$ and subsequently check whether $B$ holds. If $B$ holds, execute $C_2;C_1$. Otherwise, i.e., if $B$ does \emph{not} hold, the loop terminates.
+      You may assume that $st(X) = (var, lev', \mathit{off})$.
+      %
+    \item[(b)] Generate intermediate code for
+      \begin{center}
+        \texttt{for (x := 0; x < 10; x := x + 1) P()}
+      \end{center}
+      assuming that $st(P)= (proc, ca, lev',loc)$ and $st(x) =(var, lev, \mathit{off})$ where $lev$ is the current level.\medskip\\
+      \emph{Hint:} The loop should be executed 10 times.
+    \item[(c)] Extend the translation function $ct$ to include \texttt{let}-assignments as depicted above.
+      Such a \texttt{let}-assignment behaves as follows: 
+       \emph{Temporarily} set the value of the variable $X$ to the value $A$ evaluates to; then execute $C$. When the \texttt{let}-assignment ends (as inidicated by the \texttt{end}-keyword), variable $X$ should be reset to its old value.
+      You may assume that $st(X) = (var, lev', \mathit{off})$.
+    \item[(d)] Generate intermediate code for
+    \begin{center}
+      \texttt{x := 1; let x := 2 * x in y := x end; y := y + x}
+    \end{center}
+    assuming that $st(x) =(var, lev, \mathit{off})$ and $st(y) =(var, lev, \mathit{off'})$ where $lev$ is the current level.\medskip\\
+    \emph{Hint:} $y$ should have the value $3$ at the end.
+  \end{enumerate}
+
+\end{exercise}
+
+\begin{solution}
+  \begin{enumerate}
+    \item[(a)] We assume that the variable $X$ is declared. Thus we define: \\
+      \begin{tabular}{lcl}
+        ct(\texttt{for ($X := A$} \texttt{;} $B$ \texttt{;} $C_1$ \texttt{)} $C_2$, st, a, lev) & := & 
+                ct (\texttt{X:=A}, st, a, lev); \\
+            & & bt (\texttt{B}, st, $a_1$, lev); \\
+            & & $a_2$: JFALSE ($a_4$+1);  \\
+            & & ct (\texttt{$C_2;C_1$}, st, $a_3$, lev);\\
+            & & $a_4$: JMP ($a_1$);
+      \end{tabular}
+
+    \item[(b)] We assume that variable $x$ is declared in the current frame and get the following parameters:
+      $st(x) = (var, lev, \textit{off})$ and $st(P)= (proc, ca, lev',loc)$. Recall that $lev$ is the current level.
+
+      \begin{tabular}{rcl}
+         1 & : \hspace{0.3cm} & LIT (0);\\
+         2 & : \hspace{0.3cm} & STORE (0, off);\\
+         3 & : \hspace{0.3cm} & LOAD (0, off);\\
+         4 & : \hspace{0.3cm} & LIT (10);\\
+         5 & : \hspace{0.3cm} & LT; \\
+         6 & : \hspace{0.3cm} & JFALSE (13);\\
+         7 & : \hspace{0.3cm} & CALL (ca, $lev-lev'$, loc);\\
+         8 & : \hspace{0.3cm} & LOAD (0, off);\\
+         9 & : \hspace{0.3cm} & LIT (1); \\
+         10 & : \hspace{0.3cm} & ADD; \\
+         11 & : \hspace{0.3cm} & STORE (0, off); \\
+         12 & : \hspace{0.3cm} & JMP (3);
+      \end{tabular}
+
+    \item[(c)] We assume $st(X) = (var, lev', \mathit{off})$ and define: \\
+    \begin{tabular}{lcl}
+      ct(\texttt{let } $X := A$ \texttt{ in } $C$ \texttt{ end }), st, a, lev)& := & 
+              $a$: LOAD(lev - lev', off) \\
+          & & ct (\texttt{X:=A}, st, $a_1$, lev); \\
+          & & ct (\texttt{$C$}, st, $a_2$, lev);\\
+          & & $a_3$: STORE(lev - lev', off)
+    \end{tabular}
+
+    \item[(d)] We assume that variables $x$ and $y$ are declared in the current frame and get the following parameters:
+      $st(x) = (var, lev, \textit{off})$ and $st(y) = (var, lev, \textit{off'})$. Recall that $lev$ is the current level.
+    
+    \begin{tabular}{rcl}
+    	1 & : \hspace{0.3cm} & LIT (1);\\
+    	2 & : \hspace{0.3cm} & STORE (0, off);\\
+    	3 & : \hspace{0.3cm} & LOAD (0, off);\\ %store old x
+    	4 & : \hspace{0.3cm} & LIT (2);\\
+    	5 & : \hspace{0.3cm} & LOAD (0, off); \\
+    	6 & : \hspace{0.3cm} & MULT;\\
+    	7 & : \hspace{0.3cm} & STORE (0, off);\\ %store value in x
+    	8 & : \hspace{0.3cm} & LOAD (0, off);\\
+    	9 & : \hspace{0.3cm} & STORE (0, off');\\
+    	10 & : \hspace{0.3cm} & STORE (0, off);\\ % restore value of x
+    	11 & : \hspace{0.3cm} & LOAD (0, off');\\
+    	12 & : \hspace{0.3cm} & LOAD (0, off);\\
+    	13 & : \hspace{0.3cm} & ADD;\\
+    	14 & : \hspace{0.3cm} & STORE (0, off');\\
+    \end{tabular}
+  \end{enumerate}
+\end{solution}

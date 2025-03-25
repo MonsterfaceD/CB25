@@ -1,0 +1,269 @@
+\documentclass[a4paper]{article}
+
+\input{../commands}
+
+\begin{document}
+
+\header{Januar 6th}
+
+\section*{General Remarks}
+\begin{itemize}
+  \item Implement the methods indicated by \texttt{TODO} but do not modify the signatures of the provided methods. You are however allowed to add your own methods, data structures and classes in the code.
+  \item Please document essential parts of your code properly such that it is possible to grasp your ideas. Although the code will be graded mostly by functionality, your comments will help us to clarify whether a bug is a conceptual mistake or just a small error.
+  \item The practical part will be implemented in Java 8. You may use the standard library to solve the programming tasks. Other libraries are not allowed.
+  \item Submitted code which does not execute results in 0 points.
+  \item Your solutions to the practical programming exercise should be uploaded via Moodle as a zip file.
+  \item \textbf{Important:} Make sure that your zip file contains the ``i2Compiler'' folder, with that folder containing at least the ``src'' folder with all necessary files for compiling your code.\\
+    Example: ``i2Compiler/src/Main.java'' should be a valid path in your archive.\\
+    To test your zip archive, we provide the scripts \texttt{test\_zip.sh} (Linux) and \texttt{test\_zip.bat} (Windows, needs path to your \texttt{javac.exe} and \texttt{jar.exe}, see top of file).
+    These scripts---when given a zip archive---unzip, compile and run your solution.
+    An example execution under Linux would be \texttt{./test\_zip.sh mysolution.zip}.
+  \item If you have questions regarding the exercises and/or lecture, feel free to post in the L2P forum, write us an email at \href{mailto:cc22@i2.informatik.rwth-aachen.de}{cc22@i2.informatik.rwth-aachen.de} or visit us at our office.
+\end{itemize}
+
+
+\begin{exercise}{20}
+After finishing the lexer we will now work on the parser. In this exercise we will implement an $LR(0)$ parser and an $LR(1)$ parser. All classes needed for this task can be found in the package \texttt{parser}. A grammar is represented by \texttt{parser.grammar.AbstractGrammar} with a list of rules. A rule \texttt{parser.Rule} contains a non-terminal on the left-hand side and a list of tokens (terminals) and non-terminals on the right-hand side.
+
+During the exercise we will test the following two grammars:
+
+  \begin{minipage}[b]{0.45\linewidth}
+    \centering
+    \texttt{LR0-Grammar}\\
+    \ \\
+    $\begin{array}{lll}
+      S' & \to & S \ EOF\\
+      S  & \to & A \mid B\\
+      A  & \to & a A \mid b\\
+      B  & \to & a B \mid c
+    \end{array}$
+  \end{minipage}
+  \hspace{0.5cm}
+  \begin{minipage}[b]{0.45\linewidth}
+    \centering
+    \texttt{LR1-Grammar}\\
+    \ \\
+    $\begin{array}{lll}
+      S' & \to & S \ EOF\\
+      S  & \to & S+A \mid A\\
+      A  & \to & A*B \mid B\\
+      B  & \to & (S) \mid 42
+    \end{array}$
+  \end{minipage}
+  
+Remark that these grammars are not strictly speaking start-separated according to the lecture. However, they follow a different criteria of start-separated (namely that $S' \to S\ EOF$ is the starting transition), for which $LR(k)$ parsing can also be applied.
+
+The \icompiler{} now accepts a token and a grammar file as optional arguments to make testing the implementation easier:
+   \begin{lstlisting}[numbers=none,basicstyle=\ttfamily,breaklines=true]
+  $java -cp bin Main tests/lr0_input.txt --tokens tests/lr0_tokens.txt --grammar tests/lr0_grammar.txt
+  $java -cp bin Main tests/lr1_input.txt --tokens tests/lr1_tokens.txt --grammar tests/lr1_grammar.txt
+   \end{lstlisting}
+If no files are given the \icompiler{} uses a default grammar for the \textit{WHILE} language:
+   \begin{lstlisting}[numbers=none,basicstyle=\ttfamily,breaklines=true]
+  $java -cp bin Main tests/while.txt
+   \end{lstlisting}
+
+\begin{itemize}
+  \item[(a)] We start by computing the $LR(0)$ sets for a given grammar. An $LR(0)$ item is represented by \texttt{parser.LR0Item} and a complete $LR(0)$ set for an input is given by \texttt{parser.LR0Set}. The $LR(0)$ sets are computed by \texttt{parser.LR0SetGenerator}.
+
+    Implement the method \texttt{generateLR0StateSpace} in \texttt{LR0SetGenerator} which computes all $LR(0)$ sets and builds the corresponding automaton representing the $goto$ function (see Example 9.12 on page 21 of lecture 9). It might be helpful to implement the method \texttt{epsilonClosure} computing the epsilon closure for a given $LR(0)$ set.
+
+    For example the output of the $LR(0)$ sets for \texttt{LR0-Grammar} should look as follows:
+    \begin{verbatim}
+LR(0) sets:
+: [ S -> . A ], [ A -> . b ], [ B -> . a B ], [ S -> . B ], [ B -> . c ],
+    [ S' -> . S EOF ], [ A -> . a A ]
+S: [ S' -> S . EOF ]
+A: [ S -> A . ]
+B: [ S -> B . ]
+a: [ A -> . b ], [ B -> . a B ], [ B -> a . B ], [ A -> a . A ], [ B -> . c ],
+    [ A -> . a A ]
+b: [ A -> b . ]
+c: [ B -> c . ]
+a, A: [ A -> a A . ]
+a, B: [ B -> a B . ]
+S, EOF: [ S' -> S EOF . ]
+There are 10 LR(0) sets.
+    \end{verbatim}
+    
+        For \texttt{LR1-Grammar} the output of the $LR(0)$ sets should be as follows:
+    \begin{verbatim}
+LR(0) sets:
+: [ S -> . A ], [ A -> . B ], [ S -> . S + A ], [ B -> . 42 ], [ A -> . A * B ],
+    [ B -> . ( S ) ], [ S' -> . S EOF ]
+S: [ S -> S . + A ], [ S' -> S . EOF ]
+A: [ S -> A . ], [ A -> A . * B ]
+B: [ A -> B . ]
+(: [ S -> . A ], [ A -> . B ], [ S -> . S + A ], [ B -> . 42 ], [ B -> ( . S ) ],
+    [ A -> . A * B ], [ B -> . ( S ) ]
+42: [ B -> 42 . ]
+S, EOF: [ S' -> S EOF . ]
+S, +: [ S -> S + . A ], [ A -> . B ], [ B -> . 42 ], [ A -> . A * B ], [ B -> . ( S ) ]
+A, *: [ A -> A * . B ], [ B -> . 42 ], [ B -> . ( S ) ]
+(, S: [ S -> S . + A ], [ B -> ( S . ) ]
+(, S, ): [ B -> ( S ) . ]
+S, +, A: [ S -> S + A . ], [ A -> A . * B ]
+A, *, B: [ A -> A * B . ]
+There are 13 LR(0) sets.
+    \end{verbatim}
+
+  \item[(b)] After computing the $LR(0)$ sets we have to check them for conflicts.
+
+    Implement the method \texttt{hasConflicts} in \texttt{LR0Set} which checks if the $LR(0)$ sets contain any conflicts.
+
+    For the given grammars the output should look as follows:
+    \begin{verbatim}
+LR0-Grammar:
+0 conflicts were detected.
+
+LR1-Grammar:
+2 conflicts were detected.
+    \end{verbatim}
+
+  \item[(c)] Next we can implement the $LR(0)$ parser which uses the previously computed $LR(0)$ sets (if no conflicts occurred).
+
+    Implement the method \texttt{parse} in \texttt{parser.LR0Parser} which returns a list of rules corresponding to the right-most analysis of the input.
+
+    For the \texttt{LR0-Grammar} and the input \texttt{aab} of \texttt{tests/lr0\_input.txt} the output should be:
+    \begin{verbatim}
+LR(0) parsing result: [[ A -> b . ], [ A -> a A . ], [ A -> a A . ], [ S -> A . ],
+    [ S' -> S EOF . ]]
+ \end{verbatim}
+
+  \item[(d)] Now we also want to implement $LR(1)$ parsing for which we need the $first$ sets.
+
+    Implement the methods \texttt{computeFirst} in  \texttt{parser.LookAheadGenerator} which compute the $first$ sets for all non-terminals.
+
+    The output of the $first$ sets for \texttt{LR0-Grammar} should be:
+    \begin{verbatim}
+First sets:
+fi(A): {a, b}
+fi(B): {a, c}
+fi(S): {a, b, c}
+fi(S'): {a, b, c}
+    \end{verbatim}
+
+    For \texttt{LR1-Grammar} the output should be:
+    \begin{verbatim}
+First sets:
+fi(A): {(, 42}
+fi(B): {(, 42}
+fi(S): {(, 42}
+fi(S'): {(, 42}
+    \end{verbatim}
+    
+    \item[(e)] Next we compute the $LR(1)$ sets for a given grammar. An $LR(1)$ item is represented by \texttt{parser.LR1Item} and a complete $LR(1)$ set for an input is given by \texttt{parser.LR1Set}. The $LR(1)$ sets are computed by \texttt{parser.LR1SetGenerator}.
+
+    Implement the method \texttt{generateLR1StateSpace} in \texttt{parser.LR1SetGenerator} which computes all $LR(1)$ sets and builds the corresponding automaton representing the $goto$ function. 
+    
+    You may want to try reuse as much as possible of your work from the \texttt{parser.LR0SetGenerator}.
+
+    For example the output of the $LR(1)$ sets for \texttt{LR0-Grammar} should look as follows:
+    \begin{verbatim}
+LR(1) sets:
+: [ S -> . B , EOF], [ A -> . a A , EOF], [ B -> . c , EOF], [ B -> . a B , EOF],
+     [ S' -> . S EOF , EPSILON], [ S -> . A , EOF], [ A -> . b , EOF]
+S: [ S' -> S . EOF , EPSILON]
+A: [ S -> A . , EOF]
+b: [ A -> b . , EOF]
+B: [ S -> B . , EOF]
+a, B: [ B -> a B . , EOF]
+c: [ B -> c . , EOF]
+a: [ A -> . a A , EOF], [ B -> . c , EOF], [ B -> a . B , EOF], [ B -> . a B , EOF],
+     [ A -> a . A , EOF], [ A -> . b , EOF]
+S, EOF: [ S' -> S EOF . , EPSILON]
+a, A: [ A -> a A . , EOF]
+There are 10 LR(1) sets.
+    \end{verbatim}
+    
+        For \texttt{LR1-Grammar} the output of the $LR(1)$ sets should be as follows:
+    \begin{verbatim}
+LR(1) sets:
+: [ B -> . ( S ) , *], [ A -> . A * B , EOF], [ B -> . 42 , *], 
+    [ S -> . S + A , EOF], [ A -> . B , *], [ S' -> . S EOF , EPSILON], 
+    [ S -> . A , EOF], [ A -> . B , +], [ B -> . 42 , EOF], [ A -> . A * B , *], 
+    [ B -> . ( S ) , EOF], [ A -> . A * B , +], [ S -> . S + A , +], 
+    [ B -> . 42 , +], [ S -> . A , +], [ A -> . B , EOF], [ B -> . ( S ) , +]
+S: [ S -> S . + A , EOF], [ S -> S . + A , +], [ S' -> S . EOF , EPSILON]
+A: [ S -> A . , EOF], [ A -> A . * B , EOF], [ A -> A . * B , +], 
+    [ A -> A . * B , *], [ S -> A . , +]
+B: [ A -> B . , EOF], [ A -> B . , *], [ A -> B . , +]
+(: [ B -> . ( S ) , *], [ B -> . ( S ) , )], [ B -> . 42 , *], [ B -> . 42 , )], 
+    [ A -> . B , )], [ A -> . B , *], [ A -> . B , +], [ A -> . A * B , *], 
+    [ A -> . A * B , )], [ B -> ( . S ) , EOF], [ A -> . A * B , +], 
+    [ S -> . S + A , )], [ S -> . S + A , +], [ S -> . A , )], [ B -> . 42 , +], 
+    [ B -> ( . S ) , +], [ S -> . A , +], [ B -> ( . S ) , *], [ B -> . ( S ) , +]
+42: [ B -> 42 . , EOF], [ B -> 42 . , +], [ B -> 42 . , *]
+S, EOF: [ S' -> S EOF . , EPSILON]
+S, +: [ B -> . ( S ) , *], [ A -> . A * B , EOF], [ B -> . 42 , *], 
+    [ S -> S + . A , EOF], [ A -> . B , *], [ A -> . B , +], [ B -> . 42 , EOF], 
+    [ A -> . A * B , *], [ B -> . ( S ) , EOF], [ S -> S + . A , +], 
+    [ A -> . A * B , +], [ B -> . 42 , +], [ A -> . B , EOF], [ B -> . ( S ) , +]
+A, *: [ B -> . ( S ) , *], [ B -> . ( S ) , EOF], [ B -> . 42 , *], 
+    [ A -> A * . B , EOF], [ A -> A * . B , +], [ A -> A * . B , *], 
+    [ B -> . 42 , +], [ B -> . 42 , EOF], [ B -> . ( S ) , +]
+(, A: [ A -> A . * B , )], [ A -> A . * B , +], [ A -> A . * B , *], 
+    [ S -> A . , )], [ S -> A . , +]
+(, B: [ A -> B . , )], [ A -> B . , *], [ A -> B . , +]
+(, S: [ B -> ( S . ) , EOF], [ S -> S . + A , )], [ S -> S . + A , +], 
+    [ B -> ( S . ) , +], [ B -> ( S . ) , *]
+(, 42: [ B -> 42 . , )], [ B -> 42 . , +], [ B -> 42 . , *]
+(, (: [ B -> ( . S ) , )], [ B -> . ( S ) , *], [ B -> . ( S ) , )], 
+    [ B -> . 42 , *], [ B -> . 42 , )], [ A -> . B , )], [ A -> . B , *], 
+    [ A -> . B , +], [ A -> . A * B , *], [ A -> . A * B , )], [ A -> . A * B , +], 
+    [ S -> . S + A , )], [ S -> . S + A , +], [ S -> . A , )], [ B -> . 42 , +], 
+    [ B -> ( . S ) , +], [ S -> . A , +], [ B -> ( . S ) , *], [ B -> . ( S ) , +]
+A, *, B: [ A -> A * B . , +], [ A -> A * B . , *], [ A -> A * B . , EOF]
+S, +, A: [ A -> A . * B , EOF], [ S -> S + A . , EOF], [ S -> S + A . , +], 
+    [ A -> A . * B , +], [ A -> A . * B , *]
+(, A, *: [ B -> . ( S ) , *], [ B -> . ( S ) , )], [ B -> . 42 , *], [ B -> . 42 , )], 
+    [ A -> A * . B , +], [ A -> A * . B , *], [ A -> A * . B , )], [ B -> . 42 , +], 
+    [ B -> . ( S ) , +]
+(, S, ): [ B -> ( S ) . , EOF], [ B -> ( S ) . , +], [ B -> ( S ) . , *]
+(, S, +, A: [ A -> A . * B , )], [ S -> S + A . , +], [ A -> A . * B , +], 
+    [ A -> A . * B , *], [ S -> S + A . , )]
+(, A, *, B: [ A -> A * B . , +], [ A -> A * B . , *], [ A -> A * B . , )]
+(, S, +: [ B -> . ( S ) , *], [ B -> . ( S ) , )], [ B -> . 42 , *], [ B -> . 42 , )], 
+    [ A -> . B , )], [ A -> . B , *], [ A -> . B , +], [ A -> . A * B , *], 
+    [ A -> . A * B , )], [ S -> S + . A , +], [ A -> . A * B , +], [ S -> S + . A , )], 
+    [ B -> . 42 , +], [ B -> . ( S ) , +]
+(, (, S: [ S -> S . + A , )], [ S -> S . + A , +], [ B -> ( S . ) , +], 
+    [ B -> ( S . ) , *], [ B -> ( S . ) , )]
+(, (, S, ): [ B -> ( S ) . , +], [ B -> ( S ) . , *], [ B -> ( S ) . , )]
+There are 23 LR(1) sets.
+    \end{verbatim}
+
+  \item[(f)] After computing the $LR(1)$ sets we have to check them for conflicts.
+
+    Implement the method \texttt{hasConflicts} in \texttt{parser.LR1Set} which checks if the $LR(1)$ sets contain any conflicts.
+
+    For the given grammars the output should look as follows:
+    \begin{verbatim}
+LR0-Grammar:
+0 conflicts were detected.
+
+LR1-Grammar:
+0 conflicts were detected.
+    \end{verbatim}
+
+ \item[(e)] Finally we can create the $LR(1)$ parser.
+
+    Implement the method \texttt{parse} in  \texttt{parser.LR1Parser} which performs the $LR(1)$ analysis on a given input. (You might want to reuse code from the \texttt{parser.LR0Parser}.)
+
+    For the \texttt{LR1-Grammar} and the input \lstinline{(42) * 42 + 42} of \texttt{tests/lr1\_input.txt} the output should be:
+    \begin{verbatim}
+LR(1) parsing result: [[ B -> 42 . , )], [ A -> B . , )], [ S -> A . , )], 
+    [ B -> ( S ) . , *], [ A -> B . , *], [ B -> 42 . , +], [ A -> A * B . , +], 
+    [ S -> A . , +], [ B -> 42 . , EOF], [ A -> B . , EOF], [ S -> S + A . , EOF], 
+    [ S' -> S EOF . , EPSILON]]
+    \end{verbatim}
+\end{itemize}
+
+\end{exercise}
+
+
+\begin{solution}
+For the solution see the code in \texttt{i2CompilerSolution}.
+\end{solution}
+
+\end{document}

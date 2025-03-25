@@ -1,0 +1,75 @@
+\begin{exercise}{20}
+ Consider the following grammar $G$:
+ \begin{align*}
+    S ~\to~ & Scc \mid Ac \\
+    A ~\to~ & Aab \mid a \mid aBb \\
+    B ~\to~ & dA
+ \end{align*}
+ \begin{enumerate}[(a)]
+    \item Show that $G \notin LL(1)$.
+    \item Transform $G$ into an equivalent grammar in $LL(1)$, i.e. provide a grammar $G' \in LL(1)$ such that $L(G') = L(G)$.
+    \item Prove that $G'$ has the $LL(1)$ property.
+ \end{enumerate}
+
+\end{exercise}
+
+\begin{solution}
+\begin{enumerate}[(a)]
+\item It is $a \in \la(A \to a)$ and $a \in \la(A \to aBb)$.
+Therefore $\la(A \to a) \cap \la(A \to aBb) \neq \emptyset$ and $G \not\in LL(1)$.
+
+\item We eliminate the left recursion for all nonterminals.
+
+We start with $S$:
+\begin{align*}
+    S  ~\to~ & AcS' \\
+    S' ~\to~ & ccS' \mid \varepsilon \\
+    A  ~\to~ & Aab \mid a \mid aBb \\
+    B  ~\to~ & dA
+\end{align*}
+Next we remove the left recursion for $A$:
+\begin{align*}
+    S  ~\to~ & AcS' \\
+    S' ~\to~ & ccS' \mid \varepsilon \\
+    A  ~\to~ & aA' \mid aBbA' \\
+    A' ~\to~ & abA' \mid \varepsilon \\
+    B  ~\to~ & dA
+\end{align*}
+Finally, we apply left-factorization for the rules of $A$:
+\begin{align*}
+    S  ~\to~ & AcS' \\
+    S' ~\to~ & ccS' \mid \varepsilon \\
+    A  ~\to~ & aC \\
+    C  ~\to~ & A' \mid BbA' \\
+    A' ~\to~ & abA' \mid \varepsilon \\
+    B  ~\to~ & dA
+\end{align*}
+The resulting grammar is the grammar $G'$.
+
+\item We prove that $G' \in LL(1)$ by computing the lookahead sets.
+\begin{center}
+\begin{tabular}[h]{c|c}
+    Rule & $\la$ \\
+    \hline \hline
+    $S  ~\to~ AcS' $ & $\set{a}$ \\
+    \hline
+    $S' ~\to~ ccS' $ & $\set{c}$ \\
+    $S' ~\to~ \varepsilon $ & $\set{\varepsilon}$ \\
+    \hline
+    $A  ~\to~ aC $ & $\set{a}$ \\
+    \hline
+    $C  ~\to~ A' $ & $\set{a,b,c}$ \\
+    $C  ~\to~ BbA' $ & $\set{d}$ \\
+    \hline
+    $A' ~\to~ abA' $ & $\set{a}$ \\
+    $A' ~\to~ \varepsilon $ & $\set{b,c}$ \\
+    \hline
+    $B  ~\to~ dA$ & $\set{d}$
+\end{tabular}
+\end{center}
+For every nonterminal it holds that the intersection of their lookahead sets is empty.
+Therefore $G' \in LL(1)$.
+
+\end{enumerate}
+\end{solution}
+

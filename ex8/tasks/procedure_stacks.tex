@@ -1,0 +1,41 @@
+\begin{exercise}{30}
+  Which of the following procedure stacks could be reached from the execution of an AM program starting in the state $(1, \varepsilon, 0 : 0 : 0 : 0)$? Either give an AM program that produces such a procedure stack or justify why no such program exists.
+
+  \begin{enumerate}[(a)]
+    \item $p_1 = 4 : 3 : 10: 0 : 7 : 2 : 5 : 4 : 3 : 8 : -1: 0 : 0 : 0 : 5$
+    \item $p_2 = 6 : 5 : 4 : 3 : 6 : 6 : 5 : 4 : 4 : 2 : 0 : 0 : 0 : 0 : 0$
+    \item $p_3 = 9 : 3 : 3 : 1 : 5 : 4 : -3: -2: -4: 4 : 3 : 2 : 1 : 0 : 0 : 0 : 0 : 0$
+    \item $p_4 = 9 : 8 : 10: 5 : -2: 9 : 7 : 14: 8 : 5 : 4 : 2 : 2 : 5 : 3 : 3 : 2 : 1 : 0 : 0 : 0$
+    \item $p_5 = 7 : 3 : 84: -2: 3 : 2 : 10: 5 : 4 : 3 : 1 : 0 : 0 : 0 : 1 : 0 $
+    \item $p_6 = 9 : 3 : 10: 84: 5 : 4 : 0 : 0 : 0 : 3 : 2 : 42: 0 : 0 : 0 : 0$
+  \end{enumerate}
+\end{exercise}
+
+\begin{solution}
+  \begin{enumerate}[(a)]
+    \item Valid procedure stack. The following AM program produces the procedure stack:
+    \begin{enumerate}[1.]
+      \item lit 5
+      \item store 0 1
+      \item jmp 7
+      \item call 9 1 0
+      \item lit 0
+      \item lit 1
+      \item call 10 0 1
+      \item jmp 0
+      \item call 8 0 1
+      \item lit -1
+      \item store 0 1
+      \item jmp 4
+    \end{enumerate}
+    \item Invalid procedure stack. The two topmost frames have coinciding return addresses. Hence, these frames must origin from the same CALL. However, the two frames indicate different number of local variables, which is a contradiction.
+    %
+    \item Invalid procedure stack. The return address of the second frame from the left is negative.
+    %
+    \item Invalid procedure stack. The third frame from the left has the same value for sl and dl.
+    %
+    \item Invalid procedure stack. The return address of the I/O frame is not zero.
+    %
+    \item Invalid procedure stack. The second frame from the left has a return address of $0$. However, a call statement cannot have the return address 0, thus only the I/O frame can have return address 0.
+  \end{enumerate}
+\end{solution}

@@ -1,0 +1,5 @@
+if (! (4 < 5)) {
+    write("here");
+} else {
+    write("not here");
+}

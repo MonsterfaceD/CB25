@@ -1,0 +1,10 @@
+/** some bada$$ multi-
+ line comment "$%
+ write read bla bla
+ */
+int a = 0;
+read(a);
+while(a < 17) {
+	write(a);
+	a=a+1; // erhoehe um eins
+}

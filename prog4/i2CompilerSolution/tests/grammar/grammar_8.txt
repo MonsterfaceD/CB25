@@ -1,0 +1,2 @@
+S' -> S EOF
+S -> ( S and S ) | not S | true | false
