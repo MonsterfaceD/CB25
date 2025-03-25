@@ -1,0 +1,42 @@
+\begin{exercise}{0}
+  Which of the following statements hold?
+  \begin{enumerate}
+    \item Deterministic finite automata (DFA) are strictly less expressive than regular expressions.
+    \item Non-deterministic finite automata (NFA) are strictly more expressive than DFA.
+    \item The regular languages are closed under:
+      \begin{enumerate}
+    	 \item union,
+    	 \item intersection,
+    	 \item complement,
+    	 \item concatenation,
+    	 \item Kleene closure.
+       \end{enumerate}
+    \item Context Free Languages (CFL) are closed under:
+      \begin{enumerate}
+        \item union,
+    	\item intersection,
+    	\item complement,
+    	\item concatenation,
+    	\item Kleene closure.
+      \end{enumerate}
+    \item DCFL is the set of context free languages that are accepted by deterministic push down automata. Is DCFL = CFL?
+  \end{enumerate}
+\end{exercise}
+
+
+\begin{solution}
+  \begin{enumerate}
+    \item No. One can be effectively converted to another.
+    \item No. NFA can be converted to a DFA using the powerset construction (Rabin-Scott construction).
+    \item Yes for all. Each operation can be implemented by manipulating a DFA or NFA.
+    \item Context Free Languages (CFL) are closed under the following:
+      \begin{enumerate}
+	    \item Yes. $S_1$ and $S_2$ are starting Non-terminal for two Grammar. $S \to S_1 \mid S_2.$
+	    \item No. $L_1 = \{a^ib^ic^j \mid i,j\in\mathbb{N}\}$ and $L_2 = \{a^ib^jc^j \mid i,j\in \mathbb{N}\}$
+	    \item No. CFLs are closed under union and if they were closed under complement, they would also be closed under intersection.
+	    \item Yes.  $S \to S_1  S_2.$
+	    \item Yes. Let $S$ be the starting non-terminal. New Grammar $S' \to S S' \mid \varepsilon$.
+	\end{enumerate}
+    \item No. Just an intuitive example: Palindromes are in CFL but not in DCFL.
+  \end{enumerate}
+\end{solution}

@@ -1,0 +1,45 @@
+\begin{exercise}{0}
+  \begin{enumerate}
+    \item Let $r$ and $s$ be regular expressions. Consider the set $X$ such that $X = r.X + s$. Under the assumption that the language of $r$ does not contain $\eps$ (i.e., $\eps \not\in L(r)$), find $X$.
+    \item
+      \begin{enumerate}
+        \item Show that the language $L=\{0^{i^2} \ |\ i\in \mathbb{N}\}$ is not regular.
+        \item Show that the language $L=\{a^ib^ic^i \ |\ i\in \mathbb{N}\}$ is not a CFL.
+      \end{enumerate}
+  \end{enumerate}
+\end{exercise}
+
+\begin{solution}
+  \begin{enumerate}
+    \item Guess the solution to be  $r^*s$ (because it feels right).
+      \begin{align}\label{arden}
+        X = r.X + s\tag{$\star$}
+      \end{align}
+      By substituting $r^*s$ for $X$ in the equation (\ref{arden}), we observe that $r^*s$ satisfies this property.
+      Thus, $L(r^*s)\subseteq L(X)$.
+      Translating the equation to the topology of strings,
+      \[X = R.X \cup S\]
+      where $R=L(r)$ and $S = L(s)$. Let $\eps \not\in L(r)$.
+      Suppose the solution of the above equation is $X= R^*S \cup C$, where $R^*S \cap C = \emptyset$. This new set must also satisfy the equation.
+      Thus,
+      $$R^*S \cup C = R (R^*S \cup C) \cup S = RR^*S \cup RC \cup S = (RR^*S \cup S) \cup RC = R^* S \cup RC$$
+      Since $R^*S \cap C = \emptyset$,  $C\subseteq RC$.
+      Now we can see why the condition $\eps \not\in R$ is important, mainly $C\subseteq RC$ has no solution for $C$ when $\eps \not\in R$.
+
+      The proof also shows what happens if $\eps \in R$,  $r^*s + c$ is a solution of equation (\ref{arden}) for any $c$.
+
+    \item
+      \begin{enumerate}
+        \item Let $L$ be regular and $n$ be the integer in the pumping lemma.
+          Let $w = 0^{n^2}$. By pumping lemma $w = xyz$ with $|y|\ge 1$, $|xy|\le n$ and $xy^iz$ is in $L$ for all $i$.
+          For $i=2$, $n^2 < |xy^2z| \le n^2 + n$. Or $|zy^2z|$ is strictly  between $n^2$ and $(n+1)^2$.
+        \item Assume $L$ is defined by a CFG.
+          Let $n$ be the pumping integer. We choose a string $z= a^nb^nc^n$. We write $z = uvwxy$.
+          By the premises of the pumping lemma $|vwx|\le n$, thus it cannot contain both $a$ and $c$.
+          W.l.o.g. assume $vwx$ does not contain $c$.
+          If $v=a^kb^l$ or $x=a^kb^l$ then pumping directly leads to a word not in $L$.
+          Therefore assume $v=a^k, w=a^lb^p, x=b^q$.
+          Then for $i := 2$: $uv^2wx^2y = a^{n+k}b^{n+q}c^n$. Now either $n+k>n$ or $n+q>n$ and therefore $uv^2wx^2y \not \in L$.
+      \end{enumerate}
+  \end{enumerate}
+\end{solution}

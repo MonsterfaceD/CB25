@@ -1,0 +1,38 @@
+\begin{exercise}{0}
+  \begin{enumerate}
+    \item Describe the language of the following regular expression in words:
+      \[r= (0+1)^*0(0+1)^*0(0+1)^*.\]
+    \item Construct the regular expression for\ldots
+      \begin{enumerate}
+        \item the set of all strings with at most one pair of consecutive $0$'s and at most one pair of consecutive $1$'s,
+        \item the set of all strings with equal number of $0$'s and $1$'s such that no prefix has two more $0$'s than $1$'s nor two more $1$'s than $0$'s.
+      \end{enumerate}
+    \item Construct a context free grammar (CFG) for a set of strings of $\{(,)\}^*$ such that every string of the set has equal number of left and right parenthesis, and every prefix has at least as many left parenthesis as  right parenthesis.
+  \end{enumerate}
+\end{exercise}
+
+\begin{solution}
+  \begin{enumerate}
+    \item The set of all strings containing at least two $0$'s.
+    \item
+      \begin{enumerate}
+        \item The regular expression is: 
+        %maybe next time use a different exercise. There is always a problem with this solution.
+        %the below solution is using model checking tools proven to be equivalent to the LTL formula 
+        % NOT(0 AND X0)W(0 AND X0 AND XGNOT(0 AND X0)) AND NOT(1 AND X1)W(1 AND X1 AND XGNOT(1 AND X1))
+        %= ~(00)W(00 & XG~(00)) & ~(11)W(11 & XG~(11))
+        %so if the LTL formula corrently models the specification, the regex should also be correct.
+          \begin{align*}
+          (0+\eps)(10)^*(01)^*(10)^*(1+\eps) \\
+          +(0+\eps)(10)^*(01)^*0 \\
+          +(1+\eps)(01)^*(10)^*(01)^*(0+\eps) \\
+          +(1+\eps)(01)^*(10)^*1 \\
+          \end{align*}
+	    \item The regular expression is:
+          \[(01 + 10)^*\]
+      \end{enumerate}
+    \item The CFG is:
+      \[S \to (\ S \ ) \ S \mid \eps\]
+  \end{enumerate}
+\end{solution}
+
